@@ -185,6 +185,19 @@ class RescueCode:
         alpha = Symbol.ALPHABET
         return [alpha.index(s.text) for s in self.symbols]
 
+    def to_bitstream(self) -> str:
+        """Convert code to bitstream of 6 * 30 = 180 bits
+
+        Each symbol represents a number 0 - 63, aka a 6-bit character.
+        Convert the list of 30 symbols to a 180 bit-length bitstring.
+
+        e.g., [8, 63] => 001000 111110, which are then concatenated
+        """
+
+        numbers = self.to_numbers()
+        bits = [format(n, "06b") for n in numbers]
+        return "".join(bits)
+
     def __repr__(self):
         return (
             " ".join(c.text for c in self.symbols[:5])
