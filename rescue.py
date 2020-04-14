@@ -15,12 +15,12 @@ import requests_html
 
 class Symbol:
     """
-	Possible rescue character values, like 3-heart, 1-star, etc.
+    Possible rescue character values, like 3-heart, 1-star, etc.
 
-	Initialized via two-character string, case insensitive:
-	 - first character is any of 1 - 9, P, M, D, X
-	 - second character is f (fire), h (heart), w (water), e (emerald), s (star)
-	"""
+    Initialized via two-character string, case insensitive:
+     - first character is any of 1 - 9, P, M, D, X
+     - second character is f (fire), h (heart), w (water), e (emerald), s (star)
+    """
 
     ALPHABET = (
         [f"{i}f" for i in range(1, 10)]
@@ -53,10 +53,10 @@ class Symbol:
     @property
     def pos(self):
         """
-		The alphabet goes 1 - 9, P, M, D, X for fire, heart, water, emerald, star.
+        The alphabet goes 1 - 9, P, M, D, X for fire, heart, water, emerald, star.
 
-		1f = 0, 2f = 1, ... Xs = 64. Compute the position 0 - 64.
-		"""
+        1f = 0, 2f = 1, ... Xs = 64. Compute the position 0 - 64.
+        """
 
         return Symbol.ALPHABET.index(self.text)
 
@@ -88,8 +88,8 @@ class Symbol:
 
 class RescueCode:
     """
-	Class for rescue code requests.
-	"""
+    Class for rescue code requests.
+    """
 
     SCRAMBLE = {
         # shuffled_index: unshuffled_index
@@ -128,7 +128,7 @@ class RescueCode:
     def __init__(self, symbols: list[Symbol]):
         """
 
-		"""
+        """
 
         self.base_url = "http://136.144.185.148/pmdrtdx/decode?c="
         self.symbols = symbols
@@ -175,9 +175,15 @@ class RescueCode:
         scrambler = RescueCode.SCRAMBLE
         new_symbols = [None] * 30
         for i, symbol in enumerate(self.symbols):
-        	new_symbols[scrambler[i]] = symbol
+            new_symbols[scrambler[i]] = symbol
 
         return RescueCode(new_symbols)
+
+    def to_numbers(self) -> List[int]:
+        """Convert code to array of numbers 0 - 63"""
+
+        alpha = Symbol.ALPHABET
+        return [alpha.index(s.text) for s in self.symbols]
 
     def __repr__(self):
         return (
@@ -223,10 +229,10 @@ def run_one(code: RescueCode):
 
 def run_two(code: RescueCode, index: int):
     """
-	Run code with a symbol incremented & code with same symbol decremented.
+    Run code with a symbol incremented & code with same symbol decremented.
 
-	The goal of this is to tease out the effect of each symbol.
-	"""
+    The goal of this is to tease out the effect of each symbol.
+    """
 
     curr = code.symbols[index]
 
@@ -239,10 +245,10 @@ def run_two(code: RescueCode, index: int):
 
 def run_many(code: RescueCode):
     """
-	Run multiple trials where each symbol in a code is incremented / decremented
+    Run multiple trials where each symbol in a code is incremented / decremented
 
-	The goal of this is to automate calling run_two over and over
-	"""
+    The goal of this is to automate calling run_two over and over
+    """
 
     run_one(ex_code)
 
