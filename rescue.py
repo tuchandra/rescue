@@ -316,7 +316,7 @@ class RescueCode:
             print(
                 f"{random=}, subtracted from {int(asbytes[index], 2)} gives {newvalue=}"
             )
-            asbytes[index] = format(newvalue & 0xFF, "08b")
+            asbytes[index] = format(newvalue & ((1 << 8) - 1), "08b")
 
         # For the last byte, zero out the first four bits; alternate way to do
         # this is int(asbytes[22], 2) & 0xF passed to format(., 04b)
