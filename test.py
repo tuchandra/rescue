@@ -6,7 +6,7 @@ Tests for rescue.py -- just the RNG for now.
 
 import unittest
 
-from rescue import DotNetRNG
+from rescue import DotNetRNG, RescueCode
 
 
 class TestRNG(unittest.TestCase):
@@ -59,6 +59,56 @@ class TestRNG(unittest.TestCase):
         assert rng.next() == 992976482
         assert rng.next() == 992459907
         assert rng.next() == 1500484683
+
+
+class TestRescueCode(unittest.TestCase):
+    """Test methods of RescueCode"""
+
+    basic_code = "Pf8sPs4fPhXe3f7h1h2h5s8w3h9s3fXh4wMw4s6w8w9w6e2f8h9f1h2s1w8h"
+
+    def test_unshuffle(self):
+        """Test that the unshuffle method puts symbols in the right spot
+
+        Taken straight from:
+
+        https://gist.github.com/zaksabeast/fed5730156e26fb3e805e234fcbea60b#unshuffling
+
+        and copy/pasted to avoid transcription errors, hence the hex indexes.
+        """
+
+        code = RescueCode.from_text(TestRescueCode.basic_code)
+        new_code = code.unshuffle()
+
+        assert code.symbols[0] == new_code.symbols[3]
+        assert code.symbols[1] == new_code.symbols[0x1B]
+        assert code.symbols[2] == new_code.symbols[0xD]
+        assert code.symbols[3] == new_code.symbols[0x15]
+        assert code.symbols[4] == new_code.symbols[0xC]
+        assert code.symbols[5] == new_code.symbols[9]
+        assert code.symbols[6] == new_code.symbols[7]
+        assert code.symbols[7] == new_code.symbols[4]
+        assert code.symbols[8] == new_code.symbols[6]
+        assert code.symbols[9] == new_code.symbols[0x11]
+        assert code.symbols[10] == new_code.symbols[0x13]
+        assert code.symbols[0xB] == new_code.symbols[0x10]
+        assert code.symbols[0xC] == new_code.symbols[0x1C]
+        assert code.symbols[0xD] == new_code.symbols[0x1D]
+        assert code.symbols[0xE] == new_code.symbols[0x17]
+        assert code.symbols[0xF] == new_code.symbols[0x14]
+        assert code.symbols[0x10] == new_code.symbols[0xB]
+        assert code.symbols[0x11] == new_code.symbols[0]
+        assert code.symbols[0x12] == new_code.symbols[1]
+        assert code.symbols[0x13] == new_code.symbols[0x16]
+        assert code.symbols[0x14] == new_code.symbols[0x18]
+        assert code.symbols[0x15] == new_code.symbols[0xE]
+        assert code.symbols[0x16] == new_code.symbols[8]
+        assert code.symbols[0x17] == new_code.symbols[2]
+        assert code.symbols[0x18] == new_code.symbols[0xF]
+        assert code.symbols[0x19] == new_code.symbols[0x19]
+        assert code.symbols[0x1A] == new_code.symbols[10]
+        assert code.symbols[0x1B] == new_code.symbols[5]
+        assert code.symbols[0x1C] == new_code.symbols[0x12]
+        assert code.symbols[0x1D] == new_code.symbols[0x1A]
 
 
 if __name__ == "__main__":
