@@ -204,13 +204,13 @@ class RescueCode:
         29: 26,
     }
 
-    def __init__(self, symbols: list[Symbol]):
+    def __init__(self, symbols: List[Symbol]):
         """
 
         """
 
         self.base_url = "http://136.144.185.148/pmdrtdx/decode?c="
-        self.symbols = symbols
+        self.symbols: List[Symbol] = symbols
         self.code_text = "".join(s.text for s in symbols)
 
     @classmethod
@@ -252,7 +252,7 @@ class RescueCode:
         """Unshuffle code based on hardcoded scramble"""
 
         scrambler = RescueCode.SCRAMBLE
-        new_symbols = [None] * 30
+        new_symbols = self.symbols[:]
         for i, symbol in enumerate(self.symbols):
             new_symbols[scrambler[i]] = symbol
 
@@ -293,7 +293,7 @@ class RescueCode:
         )
 
 
-def parse_response(r: requests_html.HTMLResponse) -> tuple[str, str]:
+def parse_response(r: requests_html.HTMLResponse) -> Tuple[str, str]:
     """Parse HTML response from rescue code website"""
 
     # There is one div on the page: it has either a warning why it didn't work
@@ -342,10 +342,10 @@ def run_many(code: RescueCode):
     The goal of this is to automate calling run_two over and over
     """
 
-    run_one(ex_code)
+    run_one(code)
 
     for idx in range(30):
-        run_two(ex_code, idx)
+        run_two(code, idx)
         time.sleep(4)
 
 
