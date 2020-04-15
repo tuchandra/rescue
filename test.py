@@ -15,6 +15,12 @@ class TestRNG(unittest.TestCase):
     values for some seeds for which we were able to find examples online:
 
     https://docs.microsoft.com/en-us/dotnet/api/system.random.-ctor?view=netframework-4.8#System_Random__ctor_System_Int32_
+
+    I also installed the .NET Core from
+
+    https://docs.microsoft.com/en-us/dotnet/core/install/   linux-package-manager-ubuntu-1910
+
+    and created test programs to validate results another way.
     """
 
     def test_seed_123(self):
@@ -38,6 +44,21 @@ class TestRNG(unittest.TestCase):
         assert rng.next() == 1907260840
         assert rng.next() == 179380355
         assert rng.next() == 120870348
+
+    def test_seed_12(self):
+        """Test that the RNG produces the right values for seed 12"""
+
+        rng = DotNetRNG(12)
+        assert rng.next() == 2137491492
+        assert rng.next() == 726598452
+        assert rng.next() == 334746691
+        assert rng.next() == 256573526
+        assert rng.next() == 1339733510
+        assert rng.next() == 98050828
+        assert rng.next() == 607109598
+        assert rng.next() == 992976482
+        assert rng.next() == 992459907
+        assert rng.next() == 1500484683
 
 
 if __name__ == "__main__":
