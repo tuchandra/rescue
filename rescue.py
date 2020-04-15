@@ -8,9 +8,88 @@ Brute-force rescue requests to reverse engineer the rescue code generator.
 from __future__ import annotations
 
 import string
-import code
+import time
 
 import requests_html
+
+from typing import List, Tuple
+
+
+class DotNetRNG:
+    """
+    Implementation of the .NET random number generator. This is what the game uses
+    to encrypt & decrypt rescue passwords.
+
+    References:
+     - https://referencesource.microsoft.com/#mscorlib/system/random.cs
+     - https://forum.kirupa.com/t/as3-seeded-pseudo-random-number-generator/322651
+
+    Test cases:
+     - https://docs.microsoft.com/en-us/dotnet/api/system.random.-ctor?view=netframework-4.8#System_Random__ctor_System_Int32_
+    """
+
+    def __init__(self, seed: int):
+        self.seed = seed
+
+        self.MBIG = 0x7FFFFFFF
+        self.MSEED = 0x9A4EC86
+        self.MZ = 0
+
+        # Initialize the seed array
+        self.seed_array = [0] * 56
+        num2 = self.MSEED - abs(seed)  # called mj in C# code
+        self.seed_array[55] = num2
+
+        num3 = 1  # called mk in C# code
+        for i in range(1, 55):
+            index = (21 * i) % 55
+            self.seed_array[index] = num3
+            num3 = num2 - num3
+            if num3 < 0:
+                num3 += self.MBIG
+            num2 = self.seed_array[index]
+
+        for _ in range(1, 5):
+            for k in range(1, 56):
+                self.seed_array[k] -= self.seed_array[1 + (k + 30) % 55]
+                if self.seed_array[k] < 0:
+                    self.seed_array[k] += self.MBIG
+
+        # what?
+        self._inext = 0
+        self._inextp = 21
+        seed = 1  # what??
+
+    def _internal_sample(self) -> int:
+        """Internal sampling function to advance RNG"""
+
+        # this is not really Pythonic but mirrors the original better
+        inext = self._inext
+        inextp = self._inextp
+
+        # assignment expressions! replaces ++inext lines in original code
+        if (inext := inext + 1) >= 56:
+            inext = 1
+
+        if (inextp := inextp + 1) >= 56:
+            inextp = 1
+
+        num = self.seed_array[inext] - self.seed_array[inextp]
+        if num < 0:
+            num += self.MBIG
+
+        self.seed_array[inext] = num
+        self._inext = inext
+        self._inextp = inextp
+        return num
+
+    def next(self) -> int:
+        """Advance RNG to get another integer."""
+
+        return self._internal_sample()
+
+    def smth(self):
+        ...
 
 
 class Symbol:
