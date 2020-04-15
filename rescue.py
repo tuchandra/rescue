@@ -1,7 +1,33 @@
 """
 rescue.py
 
-Brute-force rescue requests to reverse engineer the rescue code generator.
+My attempt at cracking the PMD RT:DX rescue code generator.
+
+
+Classes
+-------
+DotNetRNG
+    Implementation of the .NET random number generator, which PMD RT:DX
+    uses since it is a Unity game.
+
+Symbol
+    Data class for storing one symbol within a rescue code, like 1/fire or
+    X/star.
+
+RescueCode
+    Class for all the logic associated with rescue codes / passwords (terms
+    used interchangeably). Includes methods to read from a text representation,
+    convert to a bitstring, and decrypt. Not all of it works yet.
+
+
+Credits
+-------
+Heavily refers to the guide at
+    https://gist.github.com/zaksabeast/fed5730156e26fb3e805e234fcbea60b
+so thank you, zaksabeast.
+
+Also, thank you to whoever created http://136.144.185.148/pmdrtdx/
+for helping me validate and brute force passwords in the process.
 
 """
 
