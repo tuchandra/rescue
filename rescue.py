@@ -277,6 +277,44 @@ class RescueCode:
         bits = [format(n, "06b") for n in numbers]
         return "".join(bits)
 
+    def decrypt(self):
+        """Decrypt password into readable information"""
+
+        # Convert bitstream into sequence of 22 bytes + 1 half byte
+        bitstream = self.to_bitstream()
+        asbytes = [bitstream[i : i + 8] for i in range(0, len(bitstream), 8)]
+        print(asbytes)
+
+        # Seed RNG with first two bytes
+        seed = int(asbytes[0] + asbytes[1], 2)
+        print(f"{seed=}")
+        rng = DotNetRNG(seed)
+
+        # For each byte: advance RNG, subtract the random value from the byte,
+        # take the lower 8 bits (?), write back to array
+        #
+        # This is wrong, but the structure should look like this
+        for index in range(2, 23):
+            random = rng.next()
+            newvalue = int(asbytes[index], 2) - random
+            print(
+                f"{random=}, subtracted from {int(asbytes[index], 2)} gives {newvalue=}"
+            )
+            asbytes[index] = format(newvalue & 0xFF, "08b")
+
+        # For the last byte, zero out the first four bits; alternate way to do
+        # this is int(asbytes[22], 2) & 0xF passed to format(., 04b)
+        asbytes[22] = asbytes[22][4:]
+        print(asbytes)
+
+        # Calculate hash and validate (???)
+        ...
+
+        # Convert back into bitstream, starting at byte 1
+        new_bitstream = "".join(asbytes[1:])
+
+        return new_bitstream
+
     def __repr__(self):
         return (
             " ".join(c.text for c in self.symbols[:5])
@@ -353,3 +391,5 @@ session = requests_html.HTMLSession()
 
 ex = "Pf8sPs4fPhXe3f7h1h2h5s8w3h9s3fXh4wMw4s6w8w9w6e2f8h9f1h2s1w8h"
 code = RescueCode.from_text(ex)
+decrypted = code.decrypt()
+
