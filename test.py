@@ -6,7 +6,7 @@ Tests for rescue.py -- just the RNG for now.
 
 import unittest
 
-from rescue import DotNetRNG, RescueCode
+from rescue import DotNetRNG, RescueCode, Symbol
 
 
 class TestRNG(unittest.TestCase):
@@ -59,6 +59,34 @@ class TestRNG(unittest.TestCase):
         assert rng.next() == 992976482
         assert rng.next() == 992459907
         assert rng.next() == 1500484683
+
+
+class TestSymbol(unittest.TestCase):
+    """Test methods of Symbol"""
+
+    def test_alphabet(self):
+        assert len(Symbol.ALPHABET) == 64
+
+    def test_pos(self):
+        assert Symbol("1f").pos == 0
+        assert Symbol("5w").pos == 30
+
+    def test_prev(self):
+        assert Symbol("1f").prev == Symbol("Ds")  # wrapping
+        assert Symbol("2w").prev == Symbol("1w")
+        assert Symbol("Ph").prev == Symbol("9h")
+        assert Symbol("1h").prev == Symbol("Xf")
+        assert Symbol("Me").prev == Symbol("Pe")
+        assert Symbol("8h").prev == Symbol("7h")
+
+    def test_next(self):
+        assert Symbol("1f").next == Symbol("2f")
+        assert Symbol("2w").next == Symbol("3w")
+        assert Symbol("9h").next == Symbol("Ph")
+        assert Symbol("Ph").next == Symbol("Mh")
+        assert Symbol("De").next == Symbol("Xe")
+        assert Symbol("Xe").next == Symbol("1s")
+        assert Symbol("Ds").next == Symbol("1f")  # wrapping
 
 
 class TestRescueCode(unittest.TestCase):
