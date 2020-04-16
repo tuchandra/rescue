@@ -119,6 +119,46 @@ class TestRescueCode(unittest.TestCase):
 
     basic_code = "Pf8sPs4fPhXe3f7h1h2h5s8w3h9s3fXh4wMw4s6w8w9w6e2f8h9f1h2s1w8h"
 
+    def test_inc_symbol(self):
+        """Test that the inc_symbol method does the right thing"""
+
+        code = RescueCode.from_text(TestRescueCode.basic_code)
+
+        code = code.inc_symbol(0)
+        assert code.symbols[0] == Symbol("Mf")
+
+        code = code.inc_symbol(1)
+        assert code.symbols[1] == Symbol("9s")
+
+        code = code.inc_symbol(2)
+        assert code.symbols[2] == Symbol("Ms")
+
+        code = code.inc_symbol(3)
+        assert code.symbols[3] == Symbol("5f")
+
+        code = code.inc_symbol(4)
+        assert code.symbols[4] == Symbol("Mh")
+
+    def test_dec_symbol(self):
+        """Test that the dec_symbol method does the right thing"""
+
+        code = RescueCode.from_text(TestRescueCode.basic_code)
+
+        code = code.dec_symbol(15)
+        assert code.symbols[15] == Symbol("Dh")
+
+        code = code.dec_symbol(16)
+        assert code.symbols[16] == Symbol("3w")
+
+        code = code.dec_symbol(17)
+        assert code.symbols[17] == Symbol("Pw")
+
+        code = code.dec_symbol(18)
+        assert code.symbols[18] == Symbol("3s")
+
+        code = code.dec_symbol(19)
+        assert code.symbols[19] == Symbol("5w")
+
     def test_unshuffle(self):
         """Test that the unshuffle method puts symbols in the right spot
 
