@@ -67,6 +67,13 @@ class TestSymbol(unittest.TestCase):
     def test_alphabet(self):
         assert len(Symbol.ALPHABET) == 64
 
+    def test_text(self):
+        assert Symbol("1f").text == "1f"
+        assert Symbol("6h").text == "6h"
+        assert Symbol("Xe").text == "Xe"
+        assert Symbol("4w").text == "4w"
+        assert Symbol("Pf").text == "Pf"
+
     def test_pos(self):
         assert Symbol("1f").pos == 0
         assert Symbol("5w").pos == 30
