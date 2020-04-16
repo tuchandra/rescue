@@ -127,7 +127,8 @@ class Symbol:
         + [f"{i}e" for i in range(1, 10)]
         + [f"{x}e" for x in ("P", "M", "D", "X")]
         + [f"{i}s" for i in range(1, 10)]
-        + [f"{x}s" for x in ("P", "M", "D", "X")]
+        + [f"{x}s" for x in ("P", "M", "D")]
+        # Note: Xs is never used!
     )
 
     def __init__(self, text: str):
@@ -159,9 +160,9 @@ class Symbol:
     def prev(self):
         """Get the previous symbol in the alphabet"""
 
-        if self.pos == 0:
+        if self.text == "1f":
             print(f"Asked for prev, but I am {self} - wrapping back around to the end")
-            return Symbol.ALPHABET[-1]
+            return Symbol(Symbol.ALPHABET[-1])
 
         return Symbol(Symbol.ALPHABET[self.pos - 1])
 
@@ -169,16 +170,22 @@ class Symbol:
     def next(self):
         """Get the next symbol in the alphabet"""
 
-        if self.pos == 64:
+        if self.text == "Ds":
             print(
                 f"Asked for next, but I am {self} - wrapping back around to the start"
             )
-            return Symbol.ALPHABET[0]
+            return Symbol(Symbol.ALPHABET[0])
 
         return Symbol(Symbol.ALPHABET[self.pos + 1])
 
     def __repr__(self):
         return f"Symbol({self.first}{self.second})"
+
+    def __eq__(self, other):
+        if not isinstance(other, Symbol):
+            return False
+
+        return self.text == other.text
 
 
 class RescueCode:
