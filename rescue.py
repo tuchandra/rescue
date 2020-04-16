@@ -320,9 +320,7 @@ class RescueCode:
         rng = DotNetRNG(seed)
 
         # For each byte: advance RNG, subtract the random value from the byte,
-        # take the lower 8 bits (?), write back to array
-        #
-        # This is wrong, but the structure should look like this
+        # take the lower 8 bits, write back to array
         for index in range(2, 23):
             random = rng.next()
             newvalue = int(asbytes[index], 2) - random
@@ -331,8 +329,7 @@ class RescueCode:
             )
             asbytes[index] = format(newvalue & ((1 << 8) - 1), "08b")
 
-        # For the last byte, zero out the first four bits; alternate way to do
-        # this is int(asbytes[22], 2) & 0xF passed to format(., 04b)
+        # For last byte, zero out the first four bits / just keep the bottom 4
         asbytes[22] = asbytes[22][4:]
         print(asbytes)
 
