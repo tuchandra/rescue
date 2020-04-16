@@ -305,11 +305,15 @@ class RescueCode:
         bits = [format(n, "06b") for n in numbers]
         return "".join(bits)
 
-    def decrypt(self):
-        """Decrypt password into readable information"""
+    def deserialize(self):
+        """Full deserialization of password (mostly just decrypting)"""
+
+        # Unshuffle first
+        code = self.unshuffle()
+        print(f"Unshuffled code: \n{code}")
 
         # Convert bitstream into sequence of 22 bytes + 1 half byte
-        bitstream = self.to_bitstream()
+        bitstream = code.to_bitstream()
         print(f"{bitstream=}")
         asbytes = [bitstream[i : i + 8] for i in range(0, len(bitstream), 8)]
         print(asbytes)
@@ -418,5 +422,5 @@ session = requests_html.HTMLSession()
 
 ex = "Pf8sPs4fPhXe3f7h1h2h5s8w3h9s3fXh4wMw4s6w8w9w6e2f8h9f1h2s1w8h"
 code = RescueCode.from_text(ex)
-decrypted = code.decrypt()
+info = code.deserialize()
 
