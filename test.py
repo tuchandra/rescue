@@ -145,6 +145,25 @@ class TestRescueCode(unittest.TestCase):
         assert code.symbols[0x1C] == new_code.symbols[0x12]
         assert code.symbols[0x1D] == new_code.symbols[0x1A]
 
+    def test_to_bitstream(self):
+        """Test the to_bitstream method"""
+
+        code = RescueCode.from_text(TestRescueCode.basic_code)
+        bits = code.to_bitstream()
+
+        assert len(bits) == 180
+
+        # Paired tests - that the first symbol is indeed the one for a 9,
+        # then that the bitstring has a binary 9 as the first 6 chars
+        assert code.to_numbers()[0] == 9  # Pf
+        assert bits[:6] == "001001"
+
+        assert code.to_numbers()[1] == 59  # 8s
+        assert bits[6:12] == "111011"
+
+        assert code.to_numbers()[5] == 51  # Xe
+        assert bits[30:36] == "110011"
+
 
 if __name__ == "__main__":
     unittest.main()
