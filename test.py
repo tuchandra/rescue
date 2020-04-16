@@ -77,6 +77,25 @@ class TestSymbol(unittest.TestCase):
     def test_pos(self):
         assert Symbol("1f").pos == 0
         assert Symbol("5w").pos == 30
+        assert Symbol("Ds").pos == 63
+
+    def test_comparisons(self):
+        """Test that symbols are in the right order"""
+
+        # fhwes
+
+        assert Symbol("1f").pos < Symbol("2f").pos
+        assert Symbol("1f").pos < Symbol("1h").pos
+        assert Symbol("1f").pos < Symbol("1w").pos
+        assert Symbol("1f").pos < Symbol("1e").pos
+        assert Symbol("1f").pos < Symbol("1s").pos
+        assert Symbol("Pf").pos < Symbol("Mf").pos
+        assert Symbol("Mf").pos < Symbol("Df").pos
+        assert Symbol("Df").pos < Symbol("Xf").pos
+        assert Symbol("Xf").pos < Symbol("1h").pos
+        assert Symbol("8e").pos < Symbol("4s").pos
+        assert Symbol("3h").pos < Symbol("5w").pos
+        assert Symbol("9w").pos < Symbol("Pe").pos
 
     def test_prev(self):
         assert Symbol("1f").prev == Symbol("Ds")  # wrapping
