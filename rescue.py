@@ -310,6 +310,7 @@ class RescueCode:
 
         # Convert bitstream into sequence of 22 bytes + 1 half byte
         bitstream = self.to_bitstream()
+        print(f"{bitstream=}")
         asbytes = [bitstream[i : i + 8] for i in range(0, len(bitstream), 8)]
         print(asbytes)
 
