@@ -338,6 +338,7 @@ class RescueCode:
 
         # Convert back into bitstream, starting at byte 1
         new_bitstream = "".join(asbytes[1:])
+        print(f"{new_bitstream=}")
 
         return new_bitstream
 
