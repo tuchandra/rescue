@@ -82,8 +82,7 @@ class TestSymbol(unittest.TestCase):
     def test_comparisons(self):
         """Test that symbols are in the right order"""
 
-        # fhwes
-
+        # Symbols go fire - heart - water - emerald - star
         assert Symbol("1f").pos < Symbol("2f").pos
         assert Symbol("1f").pos < Symbol("1h").pos
         assert Symbol("1f").pos < Symbol("1w").pos
