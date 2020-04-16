@@ -312,8 +312,9 @@ class RescueCode:
         code = self.unshuffle()
         print(f"Unshuffled code: \n{code}")
 
-        # Convert bitstream into sequence of 22 bytes + 1 half byte
+        # Convert code into 180 bits, then split into 22 bytes + 1 half-byte
         bitstream = code.to_bitstream()
+        assert len(bitstream) == 180
         print(f"{bitstream=}")
         asbytes = [bitstream[i : i + 8] for i in range(0, len(bitstream), 8)]
         print(asbytes)
