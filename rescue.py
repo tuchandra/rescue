@@ -144,7 +144,12 @@ class Symbol:
 
         self.first = first
         self.second = second
-        self.text = self.first + self.second
+
+    @property
+    def text(self):
+        """Symbol text; Symbol(1f) => '1f'"""
+
+        return self.first + self.second
 
     @property
     def pos(self):
