@@ -199,7 +199,7 @@ class RescueCode:
     """
 
     SCRAMBLE = {
-        # shuffled_index: unshuffled_index
+        # unshuffled index : shuffled index
         0: 3,
         1: 27,
         2: 13,
@@ -277,7 +277,17 @@ class RescueCode:
         return RescueCode(new_symbols)
 
     def unshuffle(self) -> RescueCode:
-        """Unshuffle code based on hardcoded scramble"""
+        """Unshuffle (part of the decryption)"""
+
+        scrambler = {v: k for k, v in RescueCode.SCRAMBLE.items()}
+        new_symbols = self.symbols[:]
+        for i, symbol in enumerate(self.symbols):
+            new_symbols[scrambler[i]] = symbol
+
+        return RescueCode(new_symbols)
+
+    def shuffle(self) -> RescueCode:
+        """Shuffle code (part of encryption)"""
 
         scrambler = RescueCode.SCRAMBLE
         new_symbols = self.symbols[:]
@@ -320,7 +330,7 @@ class RescueCode:
         print(asbytes)
 
         # Seed RNG with first two bytes
-        seed = int(asbytes[0] + asbytes[1], 2)
+        seed = int(asbytes[1] + asbytes[0], 2)  # little endian
         print(f"{seed=}")
         rng = DotNetRNG(seed)
 
