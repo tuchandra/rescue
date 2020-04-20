@@ -26,8 +26,6 @@ from __future__ import annotations
 import string
 import time
 
-import requests_html
-
 from typing import List, Tuple
 
 
