@@ -298,7 +298,6 @@ class RescueCode:
 
         """
 
-        self.base_url = "http://136.144.185.148/pmdrtdx/decode?c="
         self.symbols: List[Symbol] = symbols
         self.code_text = "".join(s.text for s in symbols)
 
@@ -313,11 +312,6 @@ class RescueCode:
 
         symbols = [Symbol(text[i : i + 2]) for i in range(0, 60, 2)]
         return cls(symbols)
-
-    def create_url(self) -> str:
-        """Create the URL to hit the rescue code generator."""
-
-        return self.base_url + self.code_text
 
     def inc_symbol(self, index: int) -> RescueCode:
         """Return a RescueCode with one symbol incremented by one"""
