@@ -414,7 +414,8 @@ class RescueCode:
         )
 
 
-ex = "Pf8sPs4fPhXe3f7h1h2h5s8w3h9s3fXh4wMw4s6w8w9w6e2f8h9f1h2s1w8h"
-code = RescueCode.from_text(ex)
-info = code.deserialize()
+if __name__ == "__main__":
+    ex = "Pf8sPs4fPhXe3f7h1h2h5s8w3h9s3fXh4wMw4s6w8w9w6e2f8h9f1h2s1w8h"
+    code = RescueCode.from_text(ex)
+    info = code.deserialize()
 
