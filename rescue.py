@@ -47,17 +47,18 @@ class DotNetRNG:
         self.seed = seed
         self.state = [0] * 56
 
-        num2 = 0x9A4EC86 - abs(seed)  # yup that's a magic number
-        self.state[55] = num2
+        new_seed = 0x9A4EC86 - abs(seed)  # yup that's a magic number
+        self.state[55] = new_seed
 
-        value = 1  # called mk in C# code
+        value = 1
         for i in range(1, 55):
-            index = (21 * i) % 55
-            self.state[index] = value
-            value = num2 - value
-            if value < 0:
-                value += 0x7FFFFFFF
-            num2 = self.state[index]
+            self.state[(21 * i) % 55] = value
+            temp = new_seed - value
+            new_seed = value
+
+            if temp < 0:
+                temp += 0x7FFFFFFF
+            value = temp
 
         for _ in range(4):
             for k in range(1, 56):
