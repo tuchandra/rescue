@@ -373,64 +373,6 @@ class RescueCode:
         )
 
 
-def parse_response(r: requests_html.HTMLResponse) -> Tuple[str, str]:
-    """Parse HTML response from rescue code website"""
-
-    # There is one div on the page: it has either a warning why it didn't work
-    # or an AOK code (that we don't care about for now)
-    warning_or_aok = r.html.find("div", first=True).text
-
-    # The response we want is in a readonly textarea
-    textarea = r.html.find("textarea[readonly='']", first=True)
-    return warning_or_aok, textarea.full_text
-
-
-def run_one(code: RescueCode):
-    """Run one trial - send a rescue code to server, log response"""
-
-    url = code.create_url()
-    resp = session.get(url)
-    worked, decoded = parse_response(resp)
-
-    print(code, "\n")
-    if "WARNING!" in worked:
-        print(worked, "\n")
-    print(decoded)
-    print("---\n")
-
-
-def run_two(code: RescueCode, index: int):
-    """
-    Run code with a symbol incremented & code with same symbol decremented.
-
-    The goal of this is to tease out the effect of each symbol.
-    """
-
-    curr = code.symbols[index]
-
-    print(f"Decrementing index {index}: {curr} -> {curr.prev}")
-    run_one(code.dec_symbol(index))
-
-    print(f"Incrementing index {index}: {curr} -> {curr.next}")
-    run_one(code.inc_symbol(index))
-
-
-def run_many(code: RescueCode):
-    """
-    Run multiple trials where each symbol in a code is incremented / decremented
-
-    The goal of this is to automate calling run_two over and over
-    """
-
-    run_one(code)
-
-    for idx in range(30):
-        run_two(code, idx)
-        time.sleep(4)
-
-
-session = requests_html.HTMLSession()
-
 ex = "Pf8sPs4fPhXe3f7h1h2h5s8w3h9s3fXh4wMw4s6w8w9w6e2f8h9f1h2s1w8h"
 code = RescueCode.from_text(ex)
 info = code.deserialize()
