@@ -102,9 +102,6 @@ class DotNetRNG:
 
         return self._internal_sample()
 
-    def smth(self):
-        ...
-
 
 class Symbol:
     """
