@@ -45,53 +45,47 @@ class DotNetRNG:
 
     def __init__(self, seed: int):
         self.seed = seed
+        self.state = [0] * 56
 
-        self.MBIG = 0x7FFFFFFF
-        self.MSEED = 0x9A4EC86
-        self.MZ = 0
+        num2 = 0x9A4EC86 - abs(seed)  # yup that's a magic number
+        self.state[55] = num2
 
-        # Initialize the seed array
-        self.seed_array = [0] * 56
-        num2 = self.MSEED - abs(seed)  # called mj in C# code
-        self.seed_array[55] = num2
-
-        num3 = 1  # called mk in C# code
+        value = 1  # called mk in C# code
         for i in range(1, 55):
             index = (21 * i) % 55
-            self.seed_array[index] = num3
-            num3 = num2 - num3
-            if num3 < 0:
-                num3 += self.MBIG
-            num2 = self.seed_array[index]
+            self.state[index] = value
+            value = num2 - value
+            if value < 0:
+                value += 0x7FFFFFFF
+            num2 = self.state[index]
 
-        for _ in range(1, 5):
+        for _ in range(4):
             for k in range(1, 56):
-                self.seed_array[k] -= self.seed_array[1 + (k + 30) % 55]
-                if self.seed_array[k] < 0:
-                    self.seed_array[k] += self.MBIG
+                self.state[k] -= self.state[1 + (k + 30) % 55]
+                if self.state[k] < 0:
+                    self.state[k] += 0x7FFFFFFF
 
-        # what?
-        self._inext = 0
-        self._inextp = 21
-        seed = 1  # what??
+        self.i1 = 0
+        self.i2 = 21
 
-    def _internal_sample(self) -> int:
-        """Internal sampling function to advance RNG"""
+        print(self.state)
 
-        # this is not really Pythonic but mirrors the original better
-        inext = self._inext
-        inextp = self._inextp
+    def next(self) -> int:
+        self.i1 += 1
+        self.i2 += 2
+        if self.i1 >= 56:
+            self.i1 = 1
+        if self.i2 >= 56:
+            self.i2 = 1
 
-        # assignment expressions! replaces ++inext lines in original code
-        if (inext := inext + 1) >= 56:
-            inext = 1
-
-        if (inextp := inextp + 1) >= 56:
-            inextp = 1
-
-        num = self.seed_array[inext] - self.seed_array[inextp]
+        num = self.state[self.i1] - self.state[self.i2]
         if num < 0:
-            num += self.MBIG
+            num += 0x7FFFFFFF
+        self.state[self.i1] = num
+
+        return num
+
+
 
         self.seed_array[inext] = num
         self._inext = inext
