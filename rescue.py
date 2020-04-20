@@ -67,9 +67,10 @@ class DotNetRNG:
                     self.state[k] += 0x7FFFFFFF
 
         self.i1 = 0
-        self.i2 = 21
-
-        print(self.state)
+        self.i2 = 31
+        # Based on my sources, i2 should start at 21 ... but the reference
+        # implementation of the password cracker uses 31, and I have no idea why.
+        # I'm switching it here purely to make it work ...
 
     def next(self) -> int:
         self.i1 += 1
