@@ -378,19 +378,19 @@ class RescueCode:
         for index in range(2, 23):
             random = rng.next()
             newvalue = new_code[index] - random
-            print(f"{random=}, subtracted from {new_code[index]} gives {newvalue=}")
+            print(
+                f"{random=}, subtracted from {new_code[index]} gives {newvalue=} => {newvalue & 0xFF}"
+            )
             new_code[index] = newvalue & 0xFF
 
         # For last byte, zero out the first four bits / just keep the bottom 4
-        asbytes[22] = asbytes[22][4:]
-        print(asbytes)
+        new_code[22] = new_code[22] & 0xF
+        print(new_code)
 
         # Calculate hash and validate (???)
         ...
 
-        # Convert back into bitstream, starting at byte 1
-        new_bitstream = "".join(asbytes[1:])
-        print(f"{new_bitstream=}")
+        # Convert back into bitstream
 
         return new_bitstream
 
