@@ -26,6 +26,7 @@ from __future__ import annotations
 import string
 import time
 
+from dataclasses import dataclass
 from typing import List, Tuple
 
 
@@ -188,6 +189,71 @@ class Symbol:
         return self.text == other.text
 
 
+@dataclass()
+class BitstreamReader:
+    """
+    Little-endian bistream reader. Given an array `bytes` of size `bitesize`-bits,
+    treat it as a bitstream and reinterpret it (through the `read` method) as
+    `count`-sized bytes.
+
+    This is a dataclass for the sake of having a nice __repr__.
+
+    Example
+    -------
+    Let:
+        bytes = [3, 53, 60, 34]
+        bytesize = 6
+        count = 8
+
+    This means to reinterpret a size-6 byte array into size-8 bytes. To do this, we
+    first read bytes as 6-bit integers:
+        bytes => [0b000011, 0b110101, 0b111100, 0b100010]
+
+    To get the first 8-bit chunk, we take all 6 bits of the first item (0b000011) and
+    the lower 2 bits of the second item (0b01). Because it's little endian, this becomes
+    (0b01 << 6) | 0b000011 = 0b01000011 = 0x43 = 67.
+
+    That leaves us four bits from the second item (0b1101) plus the rest of the array.
+    To get the second 8-bit chunk, the four bits remaining make up the lower four bits,
+    and the upper four bits come from the lower four bits of the third item (0b1100).
+    This becomes (0b1100 << 4) | 0b1101 = 0xCD = 205.
+
+    We're left with two bits from the third item (0b11) and the entire fourth item
+    (0b100010). As before, this becomes (0b100010 << 2) | 0b11 = 0x8b = 139.
+    The output (successive calls to `self.read(8)`) is therefore [67, 205, 139].
+
+    """
+
+    bytes: List[int]
+    bytesize: int = 8
+
+    # do not use these when initializing the class
+    pos: int = 0
+    bits: int = 0
+    value: int = 0
+
+    def remaining(self):
+        if self.pos < len(self.bytes):
+            return True
+        if self.bits > 0:
+            return True
+        return False
+
+    def read(self, count):
+        mask = (1 << self.bytesize) - 1
+        while self.bits < count:
+            if self.pos >= len(self.bytes):
+                break
+            self.value |= (self.bytes[self.pos] & mask) << self.bits
+            self.bits += self.bytesize
+            self.pos += 1
+
+        ret = self.value & ((1 << count) - 1)
+        self.value >>= count
+        self.bits -= count
+        return ret
+
+
 class RescueCode:
     """
     Class for rescue code requests.
@@ -297,19 +363,6 @@ class RescueCode:
         alpha = Symbol.ALPHABET
         return [alpha.index(s.text) for s in self.symbols]
 
-    def to_bitstream(self) -> str:
-        """Convert code to bitstream of 6 * 30 = 180 bits
-
-        Each symbol represents a number 0 - 63, aka a 6-bit character.
-        Convert the list of 30 symbols to a 180 bit-length bitstring.
-
-        e.g., [8, 63] => 001000 111110, which are then concatenated
-        """
-
-        numbers = self.to_numbers()
-        bits = [format(n, "06b") for n in numbers]
-        return "".join(bits)
-
     def deserialize(self):
         """Full deserialization of password (mostly just decrypting)"""
 
@@ -317,15 +370,16 @@ class RescueCode:
         code = self.unshuffle()
         print(f"Unshuffled code: \n{code}")
 
-        # Convert code into 180 bits, then split into 22 bytes + 1 half-byte
-        bitstream = code.to_bitstream()
-        assert len(bitstream) == 180
-        print(f"{bitstream=}")
-        asbytes = [bitstream[i : i + 8] for i in range(0, len(bitstream), 8)]
-        print(asbytes)
+        # Unpack into 8-bit bytes (see BitstreamReader for details, this is complex)
+        reader = BitstreamReader(code.to_numbers(), 6)
+        new_code = []
+        while reader.remaining():
+            new_code.append(reader.read(8))
+
+        print(new_code)
 
         # Seed RNG with first two bytes
-        seed = int(asbytes[1] + asbytes[0], 2)  # little endian
+        seed = new_code[0] | (new_code[1] << 8)  # little endian
         print(f"{seed=}")
         rng = DotNetRNG(seed)
 
@@ -333,11 +387,9 @@ class RescueCode:
         # take the lower 8 bits, write back to array
         for index in range(2, 23):
             random = rng.next()
-            newvalue = int(asbytes[index], 2) - random
-            print(
-                f"{random=}, subtracted from {int(asbytes[index], 2)} gives {newvalue=}"
-            )
-            asbytes[index] = format(newvalue & ((1 << 8) - 1), "08b")
+            newvalue = new_code[index] - random
+            print(f"{random=}, subtracted from {new_code[index]} gives {newvalue=}")
+            new_code[index] = newvalue & 0xFF
 
         # For last byte, zero out the first four bits / just keep the bottom 4
         asbytes[22] = asbytes[22][4:]
