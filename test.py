@@ -159,6 +159,43 @@ class TestRescueCode(unittest.TestCase):
         code = code.dec_symbol(19)
         assert code.symbols[19] == Symbol("5w")
 
+    def test_shuffle(self):
+        """Test that the shuffle method puts symbols in the right spot"""
+
+        code = RescueCode.from_text(TestRescueCode.basic_code)
+        new_code = code.shuffle()
+
+        assert code.symbols[0] == new_code.symbols[3]
+        assert code.symbols[1] == new_code.symbols[0x1B]
+        assert code.symbols[2] == new_code.symbols[0xD]
+        assert code.symbols[3] == new_code.symbols[0x15]
+        assert code.symbols[4] == new_code.symbols[0xC]
+        assert code.symbols[5] == new_code.symbols[9]
+        assert code.symbols[6] == new_code.symbols[7]
+        assert code.symbols[7] == new_code.symbols[4]
+        assert code.symbols[8] == new_code.symbols[6]
+        assert code.symbols[9] == new_code.symbols[0x11]
+        assert code.symbols[10] == new_code.symbols[0x13]
+        assert code.symbols[0xB] == new_code.symbols[0x10]
+        assert code.symbols[0xC] == new_code.symbols[0x1C]
+        assert code.symbols[0xD] == new_code.symbols[0x1D]
+        assert code.symbols[0xE] == new_code.symbols[0x17]
+        assert code.symbols[0xF] == new_code.symbols[0x14]
+        assert code.symbols[0x10] == new_code.symbols[0xB]
+        assert code.symbols[0x11] == new_code.symbols[0]
+        assert code.symbols[0x12] == new_code.symbols[1]
+        assert code.symbols[0x13] == new_code.symbols[0x16]
+        assert code.symbols[0x14] == new_code.symbols[0x18]
+        assert code.symbols[0x15] == new_code.symbols[0xE]
+        assert code.symbols[0x16] == new_code.symbols[8]
+        assert code.symbols[0x17] == new_code.symbols[2]
+        assert code.symbols[0x18] == new_code.symbols[0xF]
+        assert code.symbols[0x19] == new_code.symbols[0x19]
+        assert code.symbols[0x1A] == new_code.symbols[10]
+        assert code.symbols[0x1B] == new_code.symbols[5]
+        assert code.symbols[0x1C] == new_code.symbols[0x12]
+        assert code.symbols[0x1D] == new_code.symbols[0x1A]
+
     def test_unshuffle(self):
         """Test that the unshuffle method puts symbols in the right spot"""
 
