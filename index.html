@@ -3,7 +3,6 @@
   <head>
     <meta charset="utf-8">
     <title>title</title>
-    <!-- <script type="text/javascript" src="browserfs.js"></script> -->
     <script>
         window.languagePluginUrl = "./pyodide_min/";
     </script>
@@ -24,7 +23,7 @@
                 }
             }
             xhr.open('GET', 'rescues/rescue.py', true);
-            xhr.send(null);
+            xhr.send();
         }).then(function() {
             // pass
         });
