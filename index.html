@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>title</title>
+    <!-- <script type="text/javascript" src="browserfs.js"></script> -->
+    <script>
+        window.languagePluginUrl = "./pyodide/";
+    </script>
+    <script src="pyodide/pyodide.js"></script>
+
+    <script type="text/javascript">
+        languagePluginLoader.then(function() {
+            console.log(pyodide.runPython("import sys; sys.version"));
+            console.log(pyodide.runPython("print(1 + 2)"));
+        }).then(function() {
+            // Load rescue.py
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    pyodide.runPython(xhr.responseText);
+                    pyodide.runPython("print(globals())");
+                    console.log("Imported rescue.py!");
+                }
+            }
+            xhr.open('GET', 'rescues/rescue.py', true);
+            xhr.send(null);
+        }).then(function() {
+            // pass
+        });
+
+    </script>
+  </head>
+<body>
+  Pyodide test page <br>
+  Open your browser console to see pyodide output
+  <!-- <script type="text/javascript">
+        languagePluginLoader.then(function () {
+            console.log(pyodide.runPython('import sys\nsys.version'));
+            console.log(pyodide.runPython('print(1 + 2)'));
+        });
+  </script> -->
+</body>
+</html>
