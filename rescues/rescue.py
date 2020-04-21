@@ -88,16 +88,43 @@ class DotNetRNG:
         return num
 
 
+class OtherRNG:
+    def __init__(self, seed):
+        seed = 0x9A4EC86 - seed
+        self.state = [None] * 56
+        self.state[0] = 0
+        self.state[55] = seed
 
-        self.seed_array[inext] = num
-        self._inext = inext
-        self._inextp = inextp
-        return num
+        self.i1 = 0
+        self.i2 = 31
 
-    def next(self) -> int:
-        """Advance RNG to get another integer."""
+        value = 1
+        for x in range(1, 55):
+            self.state[(x * 21) % 55] = value
+            temp = seed - value
+            seed = value
+            value = ((temp >> 31) & 0x7FFFFFFF) + temp
 
-        return self._internal_sample()
+        for x in range(4):
+            for x in range(56):
+                index = (((x + 30) & 0xFF) % 55) + 1
+                temp = self.state[x] - self.state[index]
+                self.state[x] = ((temp >> 31) & 0x7FFFFFFF) + temp
+
+        print(self.state)
+
+    def next(self):
+        self.i1 += 1
+        self.i2 += 1
+        if self.i1 > 55:
+            self.i1 = 1
+        if self.i2 > 55:
+            self.i2 = 1
+        result = self.state[self.i1] - self.state[self.i2]
+        if result < 0:
+            result += 0x7FFFFFFF
+        self.state[self.i1] = result
+        return result
 
 
 class Symbol:
@@ -370,7 +397,7 @@ class RescueCode:
 
         # Seed RNG with first two bytes
         seed = new_code[0] | (new_code[1] << 8)  # little endian
-        print(f"{seed=}")
+        print(f"seed={seed}")
         rng = DotNetRNG(seed)
 
         # For each byte: advance RNG, subtract the random value from the byte,
@@ -379,7 +406,7 @@ class RescueCode:
             random = rng.next()
             newvalue = new_code[index] - random
             print(
-                f"{random=}, subtracted from {new_code[index]} gives {newvalue=} => {newvalue & 0xFF}"
+                f"random={random}, subtracted from {new_code[index]} gives newvalue={newvalue} => {newvalue & 0xFF}"
             )
             new_code[index] = newvalue & 0xFF
 
@@ -414,4 +441,3 @@ if __name__ == "__main__":
     ex = "Pf8sPs4fPhXe3f7h1h2h5s8w3h9s3fXh4wMw4s6w8w9w6e2f8h9f1h2s1w8h"
     code = RescueCode.from_text(ex)
     info = code.deserialize()
-
