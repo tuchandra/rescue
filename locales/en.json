@@ -1,17 +1,21 @@
 {
   "general": {
-    "daisy-mae": "Daisy Mae"
+    "pelliper": "Pelliper"
   },
   "welcome": {
-    "salutation": "Hello, and welcome to the <b>Turnip Prophet</b> app on your Nook Phone.",
-    "description": "This app lets you track your island's turnip prices daily, but you'll have to put the prices in yourself!",
-    "conclusion": "After that, the Turnip Prophet app will <b>magically</b> predict the turnip prices you'll have for the rest of the week."
+    "message": "Hello, and welcome to the Rescue Team DX password generator! <br> This app lets you generate revival passwords if you faint in a dungeon. <br> Or you can generate rescue passwords to go on as many missions as you want!",
+    "description": "",
+    "conclusion": ""
   },
   "first-time": {
     "title": "First-Time Buyer",
     "description": "Is this your first time buying turnips from Daisy Mae on your island?<i>(This affects your pattern)</i>",
     "yes": "Yes",
     "no": "No"
+  },
+  "revival-password": {
+    "title": "Revival Password",
+    "description": "Fainted in a dungeon? Enter your rescue password here!"
   },
   "patterns": {
     "title": "Previous Pattern",
