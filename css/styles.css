@@ -229,13 +229,11 @@ input[type=number]:not(:placeholder-shown) {
 
 input[type=number]:placeholder-shown:hover {
   cursor: pointer;
-  transform: scale(1.1);
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05), 0 3px 6px rgba(0, 0, 0, 0.09);
 }
 
 input[type=number]:focus {
   outline: none;
-  transform: scale(1.1);
   background: white;
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05), 0 3px 6px rgba(0, 0, 0, 0.09);
 }
@@ -296,7 +294,6 @@ input[type=number] {
 .input__radio-buttons input[type="radio"]:not(:checked)+label:hover {
   cursor: pointer;
   background: #F5F8FF;
-  transform: scale(1.1);
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05), 0 3px 6px rgba(0, 0, 0, 0.09);
 }
 
@@ -351,6 +348,11 @@ input[type=number] {
   padding-top: 10px;
 }
 
+.rescue-symbol:hover, .rescue-placeholder:hover {
+  background: #F5F8FF;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05), 0 3px 6px rgba(0, 0, 0, 0.09);
+}
+
 .password-input .rescue-symbol,
 .password-input .rescue-placeholder {
   height: 50px;
@@ -358,11 +360,6 @@ input[type=number] {
   background-size: 50px 50px;
 }
 
-.rescue-symbol:hover, .rescue-placeholder:hover {
-  background: #F5F8FF;
-  transform: scale(1.1);
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05), 0 3px 6px rgba(0, 0, 0, 0.09);
-}
 
 .rescue-symbol[background=fire] {
   background-image: url("../img/symbol_fire.png");

@@ -376,12 +376,15 @@ const replacePlaceholder = function(newElement) {
 const addToCode = function(element) {
   console.log(element);
   newElement = element.cloneNode(true);
-  newElement.removeAttribute("onclick");
+  newElement.setAttribute("onclick", "remove(this)");
   replacePlaceholder(newElement);
 }
 
 const remove = function(element) {
   console.log("clicked remove on", element);
-  // todo remove the symbol replace with placeholder
+  element.classList.replace("rescue-symbol", "rescue-placeholder");
+  element.removeAttribute("background");
+  element.removeAttribute("label");
+  element.textContent = "\xa0";
 }
 
