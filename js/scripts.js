@@ -44,7 +44,7 @@ const permalink_input = $('#permalink-input')
 const permalink_button = $('#permalink-btn')
 const snackbar = $('#snackbar')
 
-//Functions
+// Functions
 const fillFields = function (prices, first_buy, previous_pattern) {
   checkRadioByValue(first_buy_radios, first_buy);
   checkRadioByValue(previous_pattern_radios, previous_pattern);
@@ -357,3 +357,31 @@ const update = function () {
 
   calculateOutput(prices, first_buy, previous_pattern);
 }
+
+// NEW NEW NEW NEW NEW
+const passwordInput = document.getElementsByClassName("password-input")[0];
+
+const replacePlaceholder = function(newElement) {
+  // Find first empty space in password input space, put symbol in it
+  for (group of passwordInput.children) {
+    for (space of group.children) {
+      if (space.classList.contains("rescue-placeholder")) {
+        space.replaceWith(newElement);
+        return;
+      }
+    }
+  }
+}
+
+const addToCode = function(element) {
+  console.log(element);
+  newElement = element.cloneNode(true);
+  newElement.removeAttribute("onclick");
+  replacePlaceholder(newElement);
+}
+
+const remove = function(element) {
+  console.log("clicked remove on", element);
+  // todo remove the symbol replace with placeholder
+}
+

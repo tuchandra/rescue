@@ -5,12 +5,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Animal Crossing - Turnip Prophet</title>
+  <title>Pokemon Mystery Dungeon - Rescue Generator</title>
   <meta name="description" content="Animal Crossing - Turnip Prophet">
   <meta name="author" content="Mike Bryant">
   <meta name="theme-color" content="#def2d9">
 
   <!-- generics -->
+  <!-- todo -->
   <link rel="icon" href="img/favicon-32.png" sizes="32x32">
   <link rel="icon" href="img/favicon-128.png" sizes="128x128">
   <link rel="icon" href="img/favicon-192.png" sizes="192x192">
@@ -26,58 +27,166 @@
   <link rel="manifest" href="/manifest.json">
   <link rel="stylesheet" href="css/styles.css">
 
-  <!-- Global site tag (gtag.js) - Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-162470902-1"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-
-    function gtag() {
-      dataLayer.push(arguments);
-    }
-    gtag('js', new Date());
-
-    gtag('config', 'UA-162470902-1');
-  </script>
-
 </head>
 
 
 <body>
 
   <div class="dialog-box">
-    <h2 class="dialog-box__name" data-i18n="general.daisy-mae"></h2>
-    <p data-i18n="[html]welcome.salutation"></p>
-    <p data-i18n="welcome.description"></p>
-    <p data-i18n="[html]welcome.conclusion"></p>
+    <h2 class="dialog-box__name" data-i18n="general.pelliper"></h2>
+    <img src="img/pelliper_smile.png" height="96px" width="96px">
+    <p data-i18n="[html]welcome.message"></p>
   </div>
 
   <div class="nook-phone">
-    <h1>Turnip Prophet</h1>
+    <h1>Password Generator</h1>
 
-    <div>
-      <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-        viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
-        <defs>
-          <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
-        </defs>
-        <g class="parallax">
-          <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(255,255,255,0.6" />
-          <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(255,255,255,0.4)" />
-          <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(255,255,255,0.2)" />
-          <use xlink:href="#gentle-wave" x="48" y="7" fill="#fff" />
-        </g>
-      </svg>
+    <div class="nook-phone-center">
+      <h2 data-i18n="revival-password.title"></h6>
+      <label data-i18n="[html]revival-password.description"></label>
+
+      <form class="input__form">
+        <div class="password-input">
+          <div class="set-of-five">
+            <button class="rescue-placeholder" type="button" onclick="select(this)">&nbsp;</button>
+            <button class="rescue-placeholder" type="button" onclick="select(this)">&nbsp;</button>
+            <button class="rescue-placeholder" type="button" onclick="select(this)">&nbsp;</button>
+            <button class="rescue-placeholder" type="button" onclick="select(this)">&nbsp;</button>
+            <button class="rescue-placeholder" type="button" onclick="select(this)">&nbsp;</button>
+          </div>
+          <div class="set-of-five">
+            <button class="rescue-placeholder" type="button" onclick="select(this)">&nbsp;</button>
+            <button class="rescue-placeholder" type="button" onclick="select(this)">&nbsp;</button>
+            <button class="rescue-placeholder" type="button" onclick="select(this)">&nbsp;</button>
+            <button class="rescue-placeholder" type="button" onclick="select(this)">&nbsp;</button>
+            <button class="rescue-placeholder" type="button" onclick="select(this)">&nbsp;</button>
+          </div>
+          <div class="set-of-five">
+            <button class="rescue-placeholder" type="button" onclick="select(this)">&nbsp;</button>
+            <button class="rescue-placeholder" type="button" onclick="select(this)">&nbsp;</button>
+            <button class="rescue-placeholder" type="button" onclick="select(this)">&nbsp;</button>
+            <button class="rescue-placeholder" type="button" onclick="select(this)">&nbsp;</button>
+            <button class="rescue-placeholder" type="button" onclick="select(this)">&nbsp;</button>
+          </div>
+          <div class="set-of-five">
+            <button class="rescue-placeholder" type="button" onclick="select(this)">&nbsp;</button>
+            <button class="rescue-placeholder" type="button" onclick="select(this)">&nbsp;</button>
+            <button class="rescue-placeholder" type="button" onclick="select(this)">&nbsp;</button>
+            <button class="rescue-placeholder" type="button" onclick="select(this)">&nbsp;</button>
+            <button class="rescue-placeholder" type="button" onclick="select(this)">&nbsp;</button>
+          </div>
+          <div class="set-of-five">
+            <button class="rescue-placeholder" type="button" onclick="select(this)">&nbsp;</button>
+            <button class="rescue-placeholder" type="button" onclick="select(this)">&nbsp;</button>
+            <button class="rescue-placeholder" type="button" onclick="select(this)">&nbsp;</button>
+            <button class="rescue-placeholder" type="button" onclick="select(this)">&nbsp;</button>
+            <button class="rescue-placeholder" type="button" onclick="select(this)">&nbsp;</button>
+          </div>
+          <div class="set-of-five">
+            <button class="rescue-placeholder" type="button" onclick="select(this)">&nbsp;</button>
+            <button class="rescue-placeholder" type="button" onclick="select(this)">&nbsp;</button>
+            <button class="rescue-placeholder" type="button" onclick="select(this)">&nbsp;</button>
+            <button class="rescue-placeholder" type="button" onclick="select(this)">&nbsp;</button>
+            <button class="rescue-placeholder" type="button" onclick="select(this)">&nbsp;</button>
+          </div>
+        </div>
+
+        <div class="password-buttons">
+          <div class="buttons-row buttons-fire">
+            <button class="rescue-symbol" type="button" background="fire" label="1" onclick="addToCode(this)">1</button>
+            <button class="rescue-symbol" type="button" background="fire" label="2" onclick="addToCode(this)">2</button>
+            <button class="rescue-symbol" type="button" background="fire" label="3" onclick="addToCode(this)">3</button>
+            <button class="rescue-symbol" type="button" background="fire" label="4" onclick="addToCode(this)">4</button>
+            <button class="rescue-symbol" type="button" background="fire" label="5" onclick="addToCode(this)">5</button>
+            <button class="rescue-symbol" type="button" background="fire" label="6" onclick="addToCode(this)">6</button>
+            <button class="rescue-symbol" type="button" background="fire" label="7" onclick="addToCode(this)">7</button>
+            <button class="rescue-symbol" type="button" background="fire" label="8" onclick="addToCode(this)">8</button>
+            <button class="rescue-symbol" type="button" background="fire" label="9" onclick="addToCode(this)">9</button>
+            <button class="rescue-symbol" type="button" background="fire" label="P" onclick="addToCode(this)">P</button>
+            <button class="rescue-symbol" type="button" background="fire" label="M" onclick="addToCode(this)">M</button>
+            <button class="rescue-symbol" type="button" background="fire" label="D" onclick="addToCode(this)">D</button>
+            <button class="rescue-symbol" type="button" background="fire" label="X" onclick="addToCode(this)">X</button>
+          </div>
+
+          <div class="buttons-row buttons-heart">
+            <button class="rescue-symbol" type="button" background="heart" label="1" onclick="addToCode(this)">1</button>
+            <button class="rescue-symbol" type="button" background="heart" label="2" onclick="addToCode(this)">2</button>
+            <button class="rescue-symbol" type="button" background="heart" label="3" onclick="addToCode(this)">3</button>
+            <button class="rescue-symbol" type="button" background="heart" label="4" onclick="addToCode(this)">4</button>
+            <button class="rescue-symbol" type="button" background="heart" label="5" onclick="addToCode(this)">5</button>
+            <button class="rescue-symbol" type="button" background="heart" label="6" onclick="addToCode(this)">6</button>
+            <button class="rescue-symbol" type="button" background="heart" label="7" onclick="addToCode(this)">7</button>
+            <button class="rescue-symbol" type="button" background="heart" label="8" onclick="addToCode(this)">8</button>
+            <button class="rescue-symbol" type="button" background="heart" label="9" onclick="addToCode(this)">9</button>
+            <button class="rescue-symbol" type="button" background="heart" label="P" onclick="addToCode(this)">P</button>
+            <button class="rescue-symbol" type="button" background="heart" label="M" onclick="addToCode(this)">M</button>
+            <button class="rescue-symbol" type="button" background="heart" label="D" onclick="addToCode(this)">D</button>
+            <button class="rescue-symbol" type="button" background="heart" label="X" onclick="addToCode(this)">X</button>
+          </div>
+
+          <div class="buttons-row buttons-water">
+            <button class="rescue-symbol" type="button" background="water" label="1" onclick="addToCode(this)">1</button>
+            <button class="rescue-symbol" type="button" background="water" label="2" onclick="addToCode(this)">2</button>
+            <button class="rescue-symbol" type="button" background="water" label="3" onclick="addToCode(this)">3</button>
+            <button class="rescue-symbol" type="button" background="water" label="4" onclick="addToCode(this)">4</button>
+            <button class="rescue-symbol" type="button" background="water" label="5" onclick="addToCode(this)">5</button>
+            <button class="rescue-symbol" type="button" background="water" label="6" onclick="addToCode(this)">6</button>
+            <button class="rescue-symbol" type="button" background="water" label="7" onclick="addToCode(this)">7</button>
+            <button class="rescue-symbol" type="button" background="water" label="8" onclick="addToCode(this)">8</button>
+            <button class="rescue-symbol" type="button" background="water" label="9" onclick="addToCode(this)">9</button>
+            <button class="rescue-symbol" type="button" background="water" label="P" onclick="addToCode(this)">P</button>
+            <button class="rescue-symbol" type="button" background="water" label="M" onclick="addToCode(this)">M</button>
+            <button class="rescue-symbol" type="button" background="water" label="D" onclick="addToCode(this)">D</button>
+            <button class="rescue-symbol" type="button" background="water" label="X" onclick="addToCode(this)">X</button>
+          </div>
+
+          <div class="buttons-row buttons-emerald">
+            <button class="rescue-symbol" type="button" background="emerald" label="1" onclick="addToCode(this)">1</button>
+            <button class="rescue-symbol" type="button" background="emerald" label="2" onclick="addToCode(this)">2</button>
+            <button class="rescue-symbol" type="button" background="emerald" label="3" onclick="addToCode(this)">3</button>
+            <button class="rescue-symbol" type="button" background="emerald" label="4" onclick="addToCode(this)">4</button>
+            <button class="rescue-symbol" type="button" background="emerald" label="5" onclick="addToCode(this)">5</button>
+            <button class="rescue-symbol" type="button" background="emerald" label="6" onclick="addToCode(this)">6</button>
+            <button class="rescue-symbol" type="button" background="emerald" label="7" onclick="addToCode(this)">7</button>
+            <button class="rescue-symbol" type="button" background="emerald" label="8" onclick="addToCode(this)">8</button>
+            <button class="rescue-symbol" type="button" background="emerald" label="9" onclick="addToCode(this)">9</button>
+            <button class="rescue-symbol" type="button" background="emerald" label="P" onclick="addToCode(this)">P</button>
+            <button class="rescue-symbol" type="button" background="emerald" label="M" onclick="addToCode(this)">M</button>
+            <button class="rescue-symbol" type="button" background="emerald" label="D" onclick="addToCode(this)">D</button>
+            <button class="rescue-symbol" type="button" background="emerald" label="X" onclick="addToCode(this)">X</button>
+          </div>
+
+          <div class="buttons-row buttons-star">
+            <button class="rescue-symbol" type="button" background="star" label="1" onclick="addToCode(this)">1</button>
+            <button class="rescue-symbol" type="button" background="star" label="2" onclick="addToCode(this)">2</button>
+            <button class="rescue-symbol" type="button" background="star" label="3" onclick="addToCode(this)">3</button>
+            <button class="rescue-symbol" type="button" background="star" label="4" onclick="addToCode(this)">4</button>
+            <button class="rescue-symbol" type="button" background="star" label="5" onclick="addToCode(this)">5</button>
+            <button class="rescue-symbol" type="button" background="star" label="6" onclick="addToCode(this)">6</button>
+            <button class="rescue-symbol" type="button" background="star" label="7" onclick="addToCode(this)">7</button>
+            <button class="rescue-symbol" type="button" background="star" label="8" onclick="addToCode(this)">8</button>
+            <button class="rescue-symbol" type="button" background="star" label="9" onclick="addToCode(this)">9</button>
+            <button class="rescue-symbol" type="button" background="star" label="P" onclick="addToCode(this)">P</button>
+            <button class="rescue-symbol" type="button" background="star" label="M" onclick="addToCode(this)">M</button>
+            <button class="rescue-symbol" type="button" background="star" label="D" onclick="addToCode(this)">D</button>
+            <button class="rescue-symbol" type="button" background="star" label="X" onclick="addToCode(this)">X</button>
+          </div>
+        </div>
+
+      </form>
+
     </div>
 
     <div class="nook-phone-center">
-
-
-
       <form class="input__form">
         <div class="form__row">
           <h6 data-i18n="first-time.title"></h6>
+
           <div class="input__group">
             <label data-i18n="[html]first-time.description"></label>
+
+
+            <!-- TODO: get rid of this later -->
             <div class="input__radio-buttons">
               <input type="radio" id="first-time-radio-no" name="first-time" value="false" checked>
               <label for="first-time-radio-no" data-i18n="first-time.no"></label>
@@ -313,8 +422,6 @@
   <script src="js/chart.js"></script>
   <script src="js/predictions.js"></script>
   <script src="js/scripts.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.5/lib/darkmode-js.min.js"></script>
-  <script> new Darkmode({label: '🌓', buttonColorDark: '#fff00'}).showWidget();</script>
   <script src="js/translations.js"></script>
   <script src="js/contributors.js"></script>
   <script>
