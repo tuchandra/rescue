@@ -5,32 +5,42 @@
     <title>title</title>
     <script>
         // if you remove this, it'll fetch some files from a CDN instead, so nbd
-        window.languagePluginUrl = "./pyodide_min/";
+        // window.languagePluginUrl = "./pyodide_min/";
     </script>
     <script src="pyodide.js"></script>
 
     <script type="text/javascript">
-        languagePluginLoader.then(function() {
-            console.log(pyodide.runPython("import sys; sys.version"));
-            console.log(pyodide.runPython("print(1 + 2)"));
-        }).then(function() {
-            // Load rescue module, try to make test code
-            fetch("rescues/rescue.py", {mode: 'no-cors'})
-            .then(response => response.text())
-            .then(function(data) {
-                console.log(data);
-                pyodide.runPython(data);
-                console.log("Imported rescues/rescue.py!");
-            })
-            .catch(error => console.error(error))
-            .then(function() {
-                console.log("Attempting to make rescue code ...")
-                pyodide.runPython(`
-                    code = RescueCode.from_text('Pf8sPs4fPhXe3f7h1h2h5s8w3h9s3fXh4wMw4s6w8w9w6e2f8h9f1h2s1w8h')
-                    print(code)
-                `);
-            });
-        });
+        async function testPython() {
+            pyodide.runPython(`
+                import sys
+                print(sys.version)
+            `);
+            pyodide.runPython("print(f'1 + 2 = {1 + 2}')")
+        };
+
+        async function importRescues() {
+            // Load rescue module, try to create test code
+            let rescues = await fetch("rescues/rescue.py", {mode: "no-cors"})
+            let rescues_txt = await rescues.text();
+            console.log(rescues_txt);
+            pyodide.runPython(rescues_txt);
+            console.log("Imported rescues/rescue.py!");
+
+            console.log("Attempting to make rescue code ...")
+            pyodide.runPython(`
+                code = RescueCode.from_text('Pf8sPs4fPhXe3f7h1h2h5s8w3h9s3fXh4wMw4s6w8w9w6e2f8h9f1h2s1w8h')
+                print(code)
+            `);
+        };
+
+        async function main() {
+            console.log("Starting up ...")
+            await languagePluginLoader;
+            await testPython();
+            await importRescues();
+        };
+
+        main();
 
     </script>
   </head>
