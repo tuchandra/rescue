@@ -390,14 +390,12 @@ const replacePlaceholder = function(newElement) {
 }
 
 const addToCode = function(element) {
-  console.log(element);
   newElement = element.cloneNode(true);
   newElement.setAttribute("onclick", "remove(this)");
   replacePlaceholder(newElement);
 }
 
 const remove = function(element) {
-  console.log("clicked remove on", element);
   element.classList.replace("rescue-symbol", "rescue-placeholder");
   element.removeAttribute("background");
   element.removeAttribute("label");
