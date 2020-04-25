@@ -379,7 +379,7 @@ const rescueCodeInput = document.getElementsByClassName("password-input")[0];
 
 const addToCode = function(element) {
   newElement = element.cloneNode(true);
-  newElement.setAttribute("onclick", "removeFromCode(this)");
+  newElement.setAttribute("onclick", "removeFromPassword(this)");
   replacePlaceholderSymbol(newElement);
 
   // Remove the invalid style from the symbols
@@ -408,7 +408,7 @@ const replacePlaceholderSymbol = function(element) {
   }
 }
 
-const removeFromCode = function(element) {
+const removeFromPassword = function(element) {
   element.classList.replace("rescue-symbol", "rescue-placeholder");
   element.removeAttribute("background");
   element.removeAttribute("label");
@@ -416,8 +416,9 @@ const removeFromCode = function(element) {
 }
 
 const getEnteredSymbols = function() {
-  // Get the symbols that the user entered; throw error if it's incomplete,
-  // but do not do any additional validation
+  // Get the symbols that the user entered
+  // Throw error if it's incomplete, but do not do any additional validation
+  // (that part gets offloaded to Python)
 
   let symbols = new Array();
   for (group of rescueCodeInput.children) {
@@ -442,6 +443,7 @@ const submitPassword = function() {
     tooShortMessage = document.getElementById("password-too-short");
     tooShortMessage.setAttribute("style", "");
 
+    // Highlight the empty symbols in the entered password
     for (group of rescueCodeInput.children) {
       for (space of group.children) {
         if (space.classList.contains("rescue-placeholder")) {
