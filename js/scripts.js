@@ -402,3 +402,32 @@ const remove = function(element) {
   element.textContent = "\xa0";
 }
 
+const getEnteredSymbols = function() {
+  // Get the symbols that the user entered; throw error if it's incomplete,
+  // but do not do any additional validation
+
+  let symbols = new Array();
+  for (group of passwordInput.children) {
+    for (symbol of group.children) {
+      if (symbol.classList.contains("rescue-placeholder")) {
+        throw Error("Password is incomplete!");
+      }
+
+      symbols.push(symbol);
+    }
+  }
+
+  return symbols;
+}
+
+const submitPassword = function() {
+  // Submit an entered password for decoding - send to Pyodide to validate
+  try {
+    let passwordSymbols = getEnteredSymbols();
+  } catch {
+    // Password is incomplete
+    console.log("Password incomplete - do somethin later");
+  }
+
+}
+
