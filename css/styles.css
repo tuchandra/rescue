@@ -318,11 +318,11 @@ input[type=number] {
 
 /* NEW NEW NEW NEW NEW */
 
-.password-input, .password-buttons {
+.password-input, .password-buttons, .password-output {
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
-  padding-bottom: 50px;
+  padding-bottom: 40px;
   max-width: 1000px;
 }
 

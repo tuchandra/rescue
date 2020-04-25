@@ -1,0 +1,33 @@
+Open issues
+-----------
+(2) Favicon is wrong
+
+(3) Merge this repo with the pyodide repo (look at how you did it for the website histories)
+
+(4) Create interface from JS into Pyodide
+
+(5) Figure out how to get the form data from JS to Pyodide
+
+(6) Figure out what should be handled in JS vs. Python
+
+(7) Populate the revival password with a dummy password, then actually get it through Python
+
+(8) Write validation code in Python
+
+(9) Refactor the reference implementation to be more object oriented and have a clearer API for our purposes - password class, decode method, etc.
+
+(10) ALL of the work for generating a password. That's basically a spike.
+
+
+Thoughts
+--------
+4/23 - You made lots of good progress today. Yeah, your work is built off the ACNH dude. But the JS is your own, even if the layout was largely lifted from him. You're getting a lot better at this; every front end project you do looks better and gets easier. You feel less helpless while debugging, and you try things out more methodically instead of Googling for a solution immediately without fully understanding the problem.
+
+
+
+Closed issues
+-------------
+(1) If you make the screen wider the two rows of 3s don't stay equal length
+ - ideal behavior is at large widths it's 2 sets of 3
+ - at small widths it's just 6 sets of 5
+ - max width on the parent container?
