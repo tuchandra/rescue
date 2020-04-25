@@ -375,27 +375,40 @@ const update = function () {
 }
 
 // NEW NEW NEW NEW NEW
-const passwordInput = document.getElementsByClassName("password-input")[0];
+const rescueCodeInput = document.getElementsByClassName("password-input")[0];
 
-const replacePlaceholder = function(newElement) {
-  // Find first empty space in password input space, put symbol in it
-  for (group of passwordInput.children) {
+const addToCode = function(element) {
+  newElement = element.cloneNode(true);
+  newElement.setAttribute("onclick", "removeFromCode(this)");
+  replacePlaceholderSymbol(newElement);
+
+  // Remove the invalid style from the symbols
+  for (group of rescueCodeInput.children) {
+    for (space of group.children) {
+      if (space.classList.contains("rescue-invalid")) {
+        space.classList.remove("rescue-invalid");
+      }
+    }
+  }
+
+  // Remove invalid message
+    tooShortMessage = document.getElementById("password-too-short");
+    tooShortMessage.setAttribute("style", "display:none");
+}
+
+const replacePlaceholderSymbol = function(element) {
+  // Find the first empty space in the rescue code input; put element in it
+  for (group of rescueCodeInput.children) {
     for (space of group.children) {
       if (space.classList.contains("rescue-placeholder")) {
-        space.replaceWith(newElement);
+        space.replaceWith(element);
         return;
       }
     }
   }
 }
 
-const addToCode = function(element) {
-  newElement = element.cloneNode(true);
-  newElement.setAttribute("onclick", "remove(this)");
-  replacePlaceholder(newElement);
-}
-
-const remove = function(element) {
+const removeFromCode = function(element) {
   element.classList.replace("rescue-symbol", "rescue-placeholder");
   element.removeAttribute("background");
   element.removeAttribute("label");
@@ -407,7 +420,7 @@ const getEnteredSymbols = function() {
   // but do not do any additional validation
 
   let symbols = new Array();
-  for (group of passwordInput.children) {
+  for (group of rescueCodeInput.children) {
     for (symbol of group.children) {
       if (symbol.classList.contains("rescue-placeholder")) {
         throw Error("Password is incomplete!");
@@ -426,8 +439,16 @@ const submitPassword = function() {
     let passwordSymbols = getEnteredSymbols();
   } catch {
     // Password is incomplete
-    console.log("Password incomplete - do somethin later");
-  }
+    tooShortMessage = document.getElementById("password-too-short");
+    tooShortMessage.setAttribute("style", "");
 
+    for (group of rescueCodeInput.children) {
+      for (space of group.children) {
+        if (space.classList.contains("rescue-placeholder")) {
+          space.classList.add("rescue-invalid");
+        }
+      }
+    }
+  }
 }
 

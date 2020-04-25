@@ -3,7 +3,7 @@
 /* - Global Styles - */
 
 html {
-  font-size: 14px;
+  font-size: 18px;
   background: rgb(190, 226, 255);
   background-image:
     radial-gradient(#fff 20%, transparent 0),
@@ -349,9 +349,13 @@ input[type=number] {
   padding-top: 10px;
 }
 
-.rescue-symbol:hover, .rescue-placeholder:hover {
-  background: #F5F8FF;
+.rescue-symbol:hover, .rescue-placeholder:hover, input:hover {
+  background: #F5F8FF;  /* TODO better blue */
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05), 0 3px 6px rgba(0, 0, 0, 0.09);
+}
+
+.rescue-invalid {
+  background-color: lightpink;  /* TODO COLOR */
 }
 
 .password-input .rescue-symbol,
