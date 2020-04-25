@@ -61,9 +61,10 @@ h2 {
   margin: 32px auto;
   position: relative;
   border-radius: 40px;
-  max-width: 800px;
+  max-width: 1000px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.08);
   display: flex;
+  align-items: center;
 }
 
 .dialog-box-lng {
@@ -108,7 +109,7 @@ h2 {
   color: #837865;
   letter-spacing: 0.2px;
   line-height: 1.8rem;
-  margin: 0.5rem 5px;
+  margin: 0.5rem 15px;
   order: 2;
 }
 
@@ -322,7 +323,7 @@ input[type=number] {
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
-  padding-bottom: 40px;
+  /* padding-bottom: 40px; */
   max-width: 1000px;
 }
 
@@ -359,7 +360,9 @@ input[type=number] {
 }
 
 .password-input .rescue-symbol,
-.password-input .rescue-placeholder {
+.password-input .rescue-placeholder,
+.password-output .rescue-placeholder,
+.password-output .rescue-symbol {
   height: 50px;
   width: 50px;
   background-size: 50px 50px;
@@ -388,6 +391,10 @@ input[type=number] {
 
 .button.button--reset {
   color: #E45B5B;
+}
+
+input#submit-code {
+  margin-top: 2rem;
 }
 
 .table-wrapper {
