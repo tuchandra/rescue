@@ -182,14 +182,6 @@
       <label id="revival-password-text" data-i18n="[html]revival-password.description" style="display:none"></label>
 
       <div class="password-output" style="display:none">
-
-      <div class="set-of-five">
-          <button class="rescue-placeholder" type="button">&nbsp;</button>
-          <button class="rescue-placeholder" type="button">&nbsp;</button>
-          <button class="rescue-placeholder" type="button">&nbsp;</button>
-          <button class="rescue-placeholder" type="button">&nbsp;</button>
-          <button class="rescue-placeholder" type="button">&nbsp;</button>
-        </div>
         <div class="set-of-five">
           <button class="rescue-placeholder" type="button">&nbsp;</button>
           <button class="rescue-placeholder" type="button">&nbsp;</button>
@@ -225,10 +217,14 @@
           <button class="rescue-placeholder" type="button">&nbsp;</button>
           <button class="rescue-placeholder" type="button">&nbsp;</button>
         </div>
-        <label id="password-too-short" data-i18n="rescue-password.too-short" style="display:none"></label>
+        <div class="set-of-five">
+          <button class="rescue-placeholder" type="button">&nbsp;</button>
+          <button class="rescue-placeholder" type="button">&nbsp;</button>
+          <button class="rescue-placeholder" type="button">&nbsp;</button>
+          <button class="rescue-placeholder" type="button">&nbsp;</button>
+          <button class="rescue-placeholder" type="button">&nbsp;</button>
+        </div>
       </div>
-
-
     </div>
 
     <div class="nook-phone-center">
@@ -432,73 +428,73 @@
 
     <div style="transform:rotate(180deg)">
       <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-        viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
-        <defs>
-          <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
-        </defs>
-        <g class="parallax">
-          <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(255,255,255,0.6" />
-          <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(255,255,255,0.4)" />
-          <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(255,255,255,0.2)" />
-          <use xlink:href="#gentle-wave" x="48" y="7" fill="#fff" />
-        </g>
-      </svg>
-    </div>
+      viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+      <defs>
+        <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+      </defs>
+      <g class="parallax">
+        <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(255,255,255,0.6" />
+        <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(255,255,255,0.4)" />
+        <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(255,255,255,0.2)" />
+        <use xlink:href="#gentle-wave" x="48" y="7" fill="#fff" />
+      </g>
+    </svg>
   </div>
+</div>
 
+</div>
+
+<div class="dialog-box">
+  <h2 class="dialog-box__name" data-i18n="general.daisy-mae"></h2>
+  <p data-i18n="textbox.description"></p>
+  <p data-i18n="textbox.development"></p>
+</div>
+
+<div class="dialog-box">
+  <h2 class="dialog-box__name" data-i18n="general.daisy-mae"></h2>
+  <p data-i18n="[html]textbox.thanks"></p>
+  <p data-i18n="[html]textbox.support"></p>
+  <p data-i18n="textbox.contributors-text"></p>
+  <p id="contributors"><span data-i18n="textbox.contributors"></span>: </p>
+  <div class="dialog-box-lng">
+    <p data-i18n="textbox.language"></p>: <select id="language"></select>
   </div>
+</div>
 
-  <div class="dialog-box">
-    <h2 class="dialog-box__name" data-i18n="general.daisy-mae"></h2>
-    <p data-i18n="textbox.description"></p>
-    <p data-i18n="textbox.development"></p>
-  </div>
+<div id="snackbar">Some text some message...</div>
 
-  <div class="dialog-box">
-    <h2 class="dialog-box__name" data-i18n="general.daisy-mae"></h2>
-    <p data-i18n="[html]textbox.thanks"></p>
-    <p data-i18n="[html]textbox.support"></p>
-    <p data-i18n="textbox.contributors-text"></p>
-    <p id="contributors"><span data-i18n="textbox.contributors"></span>: </p>
-    <div class="dialog-box-lng">
-      <p data-i18n="textbox.language"></p>: <select id="language"></select>
-    </div>
-  </div>
-
-  <div id="snackbar">Some text some message...</div>
-
-  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/i18next/19.4.2/i18next.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/i18next-xhr-backend/3.2.2/i18nextXHRBackend.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/i18next-browser-languagedetector/4.0.2/i18nextBrowserLanguageDetector.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-i18next/1.2.1/jquery-i18next.min.js"></script>
-  <script src="js/chart.js"></script>
-  <script src="js/predictions.js"></script>
-  <script src="js/scripts.js"></script>
-  <script src="js/translations.js"></script>
-  <script src="js/contributors.js"></script>
-  <script>
-    // Check compatibility for the browser we're running this in
-    if ("serviceWorker" in navigator) {
-      if (navigator.serviceWorker.controller) {
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/i18next/19.4.2/i18next.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/i18next-xhr-backend/3.2.2/i18nextXHRBackend.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/i18next-browser-languagedetector/4.0.2/i18nextBrowserLanguageDetector.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-i18next/1.2.1/jquery-i18next.min.js"></script>
+<script src="js/chart.js"></script>
+<script src="js/predictions.js"></script>
+<script src="js/scripts.js"></script>
+<script src="js/translations.js"></script>
+<script src="js/contributors.js"></script>
+<script>
+  // Check compatibility for the browser we're running this in
+  if ("serviceWorker" in navigator) {
+    if (navigator.serviceWorker.controller) {
+      console.log(
+      "[PWA] Service Worker already found, skipping register"
+      );
+    } else {
+      // Register the service worker
+      navigator.serviceWorker
+      .register("/service-worker.js", {
+        scope: "./",
+      })
+      .then(function (reg) {
         console.log(
-          "[PWA] Service Worker already found, skipping register"
+        "[PWA] Service worker has been registered for scope: " +
+        reg.scope
         );
-      } else {
-        // Register the service worker
-        navigator.serviceWorker
-          .register("/service-worker.js", {
-            scope: "./",
-          })
-          .then(function (reg) {
-            console.log(
-              "[PWA] Service worker has been registered for scope: " +
-                reg.scope
-            );
-          });
-      }
+      });
     }
-  </script>
+  }
+</script>
 </body>
 </html>
