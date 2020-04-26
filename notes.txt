@@ -10,13 +10,23 @@ Open issues
 
 (6) Figure out what should be handled in JS vs. Python
 
-(7) Populate the revival password with a dummy password, then actually get it through Python
+(7) Get the revival password through Python
 
 (8) Write validation code in Python
 
 (9) Refactor the reference implementation to be more object oriented and have a clearer API for our purposes - password class, decode method, etc.
 
 (10) ALL of the work for generating a password. That's basically a spike.
+
+(11) On smaller screens, Pelliper's image isn't centered
+
+(12) Add background color to distinguish keyboard / sections of app, maybe.
+
+(13) Refactor colors in general.
+
+(15) Get rid of HTML / CSS / JS I don't need.
+
+(16) A lot of duplicated code iterating through "sets of 5" rescue symbols ... figure that out.
 
 
 Thoughts
@@ -31,3 +41,6 @@ Closed issues
  - ideal behavior is at large widths it's 2 sets of 3
  - at small widths it's just 6 sets of 5
  - max width on the parent container?
+
+(14) Make "submit" button create a dummy revival password and have it appear on the page
+
