@@ -1,5 +1,4 @@
 function updateContent() {
-  update();
   $('body').localize();
 }
 const defaultLanguage = 'en';
@@ -14,17 +13,7 @@ i18next
   },
 }, (err, t) => {
   const languages = [
-    ['de', 'Deutsch'],
     ['en', 'English'],
-    ['es-ES', 'Español'],
-    ['fr', 'Français'],
-    ['it', 'Italiano'],
-    ['ja', '日本語'],
-    ['ko', '한국어'],
-    ['pt-BR', 'Português'],
-    ['ru', 'Русский'],
-    ['zh-CN', '简体中文'],
-    ['zh-TW', '繁體中文']
   ].sort(),
   languageSelector = $('#language');
   languages.map(([code, name]) => {
@@ -46,8 +35,8 @@ i18next
     languageSelector.val(lng);
     updateContent();
   });
+
   // init set content
-  $(document).ready(initialize);
   $(document).on('input', updateContent);
-  $('input[type = radio]').on('change', updateContent);
+  initialize();
 });

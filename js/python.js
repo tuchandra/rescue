@@ -7,7 +7,7 @@ isn't functionally different from any other adapter that connects two pieces
 of tech, but the name "python.js" is kind of wild.
 */
 
-async function start() {
+async function startPython() {
   console.log("Starting Python ...");
   await languagePluginLoader;
 
@@ -18,7 +18,7 @@ async function testPython() {
 		import sys
 		print(sys.version)
 	`);
-	pyodide.runPython("print(f'1 + 2 = {1 + 2}')")
+	pyodide.runPython("print(f'1 + 2 = {1 + 2}')");
 };
 
 async function importRescues() {
@@ -36,11 +36,8 @@ async function importRescues() {
 	`);
 };
 
-async function main() {
-	console.log("Starting up ...")
-	await languagePluginLoader;
+async function initializePython() {
+	await startPython();
 	await testPython();
 	await importRescues();
 };
-
-main();
