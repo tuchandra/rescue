@@ -32,6 +32,13 @@ h2 {
   font-size: 1.6rem;
 }
 
+h4 {
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: normal;
+  line-height: 1rem;
+}
+
 .nook-phone {
   width: 100%;
   max-width: 1400px;
@@ -143,7 +150,6 @@ h2 {
   background: white;
   display: flex;
   flex-direction: column;
-  padding: 16px;
   align-items: center;
 }
 
@@ -323,8 +329,14 @@ input[type=number] {
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
-  /* padding-bottom: 40px; */
+  padding-top: 20px;
+  padding-bottom: 20px;
+  border-radius: 20px;
   max-width: 1000px;
+}
+
+.password-buttons {
+  /* background-color: #f8f8f8; */
 }
 
 .set-of-five {
@@ -394,7 +406,7 @@ input[type=number] {
 }
 
 input#submit-code {
-  margin-top: 2rem;
+  margin-bottom: 1rem;
 }
 
 .table-wrapper {
