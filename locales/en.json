@@ -13,14 +13,18 @@
     "yes": "Yes",
     "no": "No"
   },
-  "rescue-password": {
-    "title": "Generate Revival Password",
-    "description": "Fainted in a dungeon? Enter your rescue password here!",
+  "revival-generator": {
+    "title": "Revival Password Generator",
+    "description": "Fainted in a dungeon? Enter your rescue password using the keyboard here!",
     "too-short": "Make sure you fill out every symbol!"
   },
   "revival-password": {
     "title": "Revival Password",
     "description": "Here is your revival password!"
+  },
+  "rescue-generator": {
+    "title": "Rescue Password Generator",
+    "description": "Want to go on a custom mission? Build it here!"
   },
   "patterns": {
     "title": "Previous Pattern",
