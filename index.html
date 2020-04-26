@@ -39,60 +39,12 @@
   </div>
 
   <div class="nook-phone">
-    <h1>Password Generator</h1>
+    <h1 data-i18n="revival-generator.title"></h1>
 
     <div class="nook-phone-center">
-      <h2 data-i18n="rescue-password.title"></h2>
-      <label data-i18n="[html]rescue-password.description"></label>
+      <h4 data-i18n="[html]revival-generator.description"></h4>
 
       <form class="input__form">
-        <div class="password-input">
-          <div class="set-of-five">
-            <button class="rescue-placeholder" type="button">&nbsp;</button>
-            <button class="rescue-placeholder" type="button">&nbsp;</button>
-            <button class="rescue-placeholder" type="button">&nbsp;</button>
-            <button class="rescue-placeholder" type="button">&nbsp;</button>
-            <button class="rescue-placeholder" type="button">&nbsp;</button>
-          </div>
-          <div class="set-of-five">
-            <button class="rescue-placeholder" type="button">&nbsp;</button>
-            <button class="rescue-placeholder" type="button">&nbsp;</button>
-            <button class="rescue-placeholder" type="button">&nbsp;</button>
-            <button class="rescue-placeholder" type="button">&nbsp;</button>
-            <button class="rescue-placeholder" type="button">&nbsp;</button>
-          </div>
-          <div class="set-of-five">
-            <button class="rescue-placeholder" type="button">&nbsp;</button>
-            <button class="rescue-placeholder" type="button">&nbsp;</button>
-            <button class="rescue-placeholder" type="button">&nbsp;</button>
-            <button class="rescue-placeholder" type="button">&nbsp;</button>
-            <button class="rescue-placeholder" type="button">&nbsp;</button>
-          </div>
-          <div class="set-of-five">
-            <button class="rescue-placeholder" type="button">&nbsp;</button>
-            <button class="rescue-placeholder" type="button">&nbsp;</button>
-            <button class="rescue-placeholder" type="button">&nbsp;</button>
-            <button class="rescue-placeholder" type="button">&nbsp;</button>
-            <button class="rescue-placeholder" type="button">&nbsp;</button>
-          </div>
-          <div class="set-of-five">
-            <button class="rescue-placeholder" type="button">&nbsp;</button>
-            <button class="rescue-placeholder" type="button">&nbsp;</button>
-            <button class="rescue-placeholder" type="button">&nbsp;</button>
-            <button class="rescue-placeholder" type="button">&nbsp;</button>
-            <button class="rescue-placeholder" type="button">&nbsp;</button>
-          </div>
-          <div class="set-of-five">
-            <button class="rescue-placeholder" type="button">&nbsp;</button>
-            <button class="rescue-placeholder" type="button">&nbsp;</button>
-            <button class="rescue-placeholder" type="button">&nbsp;</button>
-            <button class="rescue-placeholder" type="button">&nbsp;</button>
-            <button class="rescue-placeholder" type="button">&nbsp;</button>
-          </div>
-          <label id="password-too-short" data-i18n="rescue-password.too-short" style="display:none"></label>
-        </div>
-
-        <h2>Keyboard</h2>
         <div class="password-buttons">
           <div class="buttons-row buttons-fire">
             <button class="rescue-symbol" type="button" background="fire" label="1" onclick="addToCode(this)">1</button>
@@ -175,11 +127,57 @@
           </div>
         </div>
 
+        <div class="password-input">
+          <div class="set-of-five">
+            <button class="rescue-placeholder" type="button">&nbsp;</button>
+            <button class="rescue-placeholder" type="button">&nbsp;</button>
+            <button class="rescue-placeholder" type="button">&nbsp;</button>
+            <button class="rescue-placeholder" type="button">&nbsp;</button>
+            <button class="rescue-placeholder" type="button">&nbsp;</button>
+          </div>
+          <div class="set-of-five">
+            <button class="rescue-placeholder" type="button">&nbsp;</button>
+            <button class="rescue-placeholder" type="button">&nbsp;</button>
+            <button class="rescue-placeholder" type="button">&nbsp;</button>
+            <button class="rescue-placeholder" type="button">&nbsp;</button>
+            <button class="rescue-placeholder" type="button">&nbsp;</button>
+          </div>
+          <div class="set-of-five">
+            <button class="rescue-placeholder" type="button">&nbsp;</button>
+            <button class="rescue-placeholder" type="button">&nbsp;</button>
+            <button class="rescue-placeholder" type="button">&nbsp;</button>
+            <button class="rescue-placeholder" type="button">&nbsp;</button>
+            <button class="rescue-placeholder" type="button">&nbsp;</button>
+          </div>
+          <div class="set-of-five">
+            <button class="rescue-placeholder" type="button">&nbsp;</button>
+            <button class="rescue-placeholder" type="button">&nbsp;</button>
+            <button class="rescue-placeholder" type="button">&nbsp;</button>
+            <button class="rescue-placeholder" type="button">&nbsp;</button>
+            <button class="rescue-placeholder" type="button">&nbsp;</button>
+          </div>
+          <div class="set-of-five">
+            <button class="rescue-placeholder" type="button">&nbsp;</button>
+            <button class="rescue-placeholder" type="button">&nbsp;</button>
+            <button class="rescue-placeholder" type="button">&nbsp;</button>
+            <button class="rescue-placeholder" type="button">&nbsp;</button>
+            <button class="rescue-placeholder" type="button">&nbsp;</button>
+          </div>
+          <div class="set-of-five">
+            <button class="rescue-placeholder" type="button">&nbsp;</button>
+            <button class="rescue-placeholder" type="button">&nbsp;</button>
+            <button class="rescue-placeholder" type="button">&nbsp;</button>
+            <button class="rescue-placeholder" type="button">&nbsp;</button>
+            <button class="rescue-placeholder" type="button">&nbsp;</button>
+          </div>
+          <label id="password-too-short" data-i18n="revival-generator.too-short" style="display:none"></label>
+        </div>
+
         <input type="button" id="submit-code" label="submit" value="Submit!" onclick="submitPassword()">
 
       </form>
 
-      <label id="revival-password-text" data-i18n="[html]revival-password.description" style="display:none"></label>
+      <h4 id="revival-password-text" data-i18n="[html]revival-password.description" style="display:none"></h4>
 
       <div class="password-output" style="display:none">
         <div class="set-of-five">
@@ -226,7 +224,23 @@
         </div>
       </div>
     </div>
+  </div>
 
+  <div class="nook-phone">
+    <h1 data-i18n="rescue-generator.title"></h1>
+
+    <div class="nook-phone-center">
+      <h4 data-i18n="[html]rescue-generator.description"></h4>
+
+      <form class="input__form"></form>
+    </div>
+
+  </div>
+
+  <!-- *************************************** -->
+  <!-- TODO don't need anything below this !!! -->
+  <!-- *************************************** -->
+  <div class="nook-phone">
     <div class="nook-phone-center">
       <form class="input__form">
         <div class="form__row">
