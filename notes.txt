@@ -2,8 +2,6 @@ Open issues
 -----------
 (2) Favicon is wrong
 
-(3) Merge this repo with the pyodide repo (look at how you did it for the website histories)
-
 (4) Create interface from JS into Pyodide
  - in JS,
 
@@ -37,22 +35,23 @@ Thoughts
 
 Closed issues
 -------------
-(1) If you make the screen wider the two rows of 3s don't stay equal length
+#1: If you make the screen wider the two rows of 3s don't stay equal length
  - ideal behavior is at large widths it's 2 sets of 3
  - at small widths it's just 6 sets of 5
  - max width on the parent container?
  >> CLOSED: solution was to set max-width
 
-(14) Make "submit" button create a dummy revival password and have it appear on the page
+#14: Make "submit" button create a dummy revival password and have it appear on the page
  >> CLOSED: done
 
-(18) Split out revival generator & rescue generator sections
+#18: Split out revival generator & rescue generator sections
  >> CLOSED: done
 
-(11) On smaller screens, Pelliper's image isn't centered
+#11: On smaller screens, Pelliper's image isn't centered
  >> CLOSED: solution was to set align-items: centered since dialog-box is a flex container
 
-(17) Detach fork from original repo
+#17: Detach fork from original repo
  >> CLOSED: easy. Create a new repo on Github, set it as the origin locally, and push there.
 
-
+#3: Merge this repo with the pyodide repo (look at how you did it for the website histories)
+ >> CLOSED: pretty easy. After solving #17, I set the new repo as remote `webapp` on the other repo, then did `git fetch git://whatever master:webapp` to put it on a new branch, then `git merge --allow-unrelated-histories webapp` to merge its changes into master, then `git push origin master` to push to the shared repo. Then `git pull` on the new one, and I can sucessfully close my other VS Code window.
