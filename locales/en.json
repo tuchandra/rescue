@@ -15,7 +15,7 @@
   },
   "revival-generator": {
     "title": "Revival Password Generator",
-    "description": "Fainted in a dungeon? Enter your rescue password using the keyboard here!",
+    "description": "Fainted in a dungeon? Enter your rescue password using the keyboard below!",
     "too-short": "Make sure you fill out every symbol!"
   },
   "revival-password": {
