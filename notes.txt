@@ -1,0 +1,58 @@
+Open issues
+-----------
+(2) Favicon is wrong
+
+(3) Merge this repo with the pyodide repo (look at how you did it for the website histories)
+
+(4) Create interface from JS into Pyodide
+ - in JS,
+
+(5) Figure out how to get the form data from JS to Pyodide
+
+(6) Figure out what should be handled in JS vs. Python
+
+(7) Get the revival password through Python
+
+(8) Write validation code in Python
+
+(9) Refactor the reference implementation to be more object oriented and have a clearer API for our purposes - password class, decode method, etc.
+
+(10) ALL of the work for generating a password. That's basically a spike.
+
+(12) Add background color to distinguish keyboard / sections of app, maybe.
+
+(13) Refactor colors in general.
+
+(15) Get rid of HTML / CSS / JS I don't need.
+
+(16) A lot of duplicated code iterating through "sets of 5" rescue symbols ... figure that out.
+
+
+
+Thoughts
+--------
+4/23 - You made lots of good progress today. Yeah, your work is built off the ACNH dude. But the JS is your own, even if the layout was largely lifted from him. You're getting a lot better at this; every front end project you do looks better and gets easier. You feel less helpless while debugging, and you try things out more methodically instead of Googling for a solution immediately without fully understanding the problem.
+
+
+
+Closed issues
+-------------
+(1) If you make the screen wider the two rows of 3s don't stay equal length
+ - ideal behavior is at large widths it's 2 sets of 3
+ - at small widths it's just 6 sets of 5
+ - max width on the parent container?
+ >> CLOSED: solution was to set max-width
+
+(14) Make "submit" button create a dummy revival password and have it appear on the page
+ >> CLOSED: done
+
+(18) Split out revival generator & rescue generator sections
+ >> CLOSED: done
+
+(11) On smaller screens, Pelliper's image isn't centered
+ >> CLOSED: solution was to set align-items: centered since dialog-box is a flex container
+
+(17) Detach fork from original repo
+ >> CLOSED: easy. Create a new repo on Github, set it as the origin locally, and push there.
+
+
