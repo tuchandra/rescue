@@ -231,7 +231,52 @@
     <div class="nook-phone-center">
       <h4 data-i18n="[html]rescue-generator.description"></h4>
 
-      <form class="input__form"></form>
+      <form class="input__form__row">
+        <div class="rescue_input input__group">
+          <label for="dungeon" data-i18n="rescue-form.dungeon"></label>
+          <br/>
+          <select name="dungeon">
+            <option value="Tiny Woods">Tiny Woods</option>
+            <option value="Sky Tower">Sky Tower</option>
+            <option value="Purity Forest">Purity Forest</optione>
+          </select>
+        </div>
+
+        <div class="rescue_input">
+          <label for="floor" data-i18n="rescue-form.floor"></label>
+          <select name="floor">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+          </select>
+        </div>
+        
+        <div class="rescue_input input__group">
+          <label for="reward" data-i18n="rescue-form.reward.name"></label>
+          <input type="radio" id="reward-type2-deluxe" name="reward">
+          <label for="reward-type2-deluxe" data-i18n="rescue-form.reward.deluxe"></label>
+          <input type="radio" id="reward-type2-special">
+          <label for="reward-type2-special" data-i18n="rescue-form.reward.special"></label>
+          <input type="radio" id="reward-type2-regular">
+          <label for="reward-type2-regular" data-i18n="rescue-form.reward.regular"></label>
+        </div>
+        
+        <div class="rescue_input input__group">
+          <label for="reward" data-i18n="rescue-form.reward.name"></label>
+          <input type="radio" id="reward-type-deluxe" name="reward">
+          <label for="reward-type-deluxe" data-i18n="rescue-form.reward.deluxe"></label>
+          <input type="radio" id="reward-type-special">
+          <label for="reward-type-special" data-i18n="rescue-form.reward.special"></label>
+          <input type="radio" id="reward-type-regular">
+          <label for="reward-type-regular" data-i18n="rescue-form.reward.regular"></label>
+        </div>
+        
+        <div class="rescue_input input__group">
+          <label for="team" data-i18n="rescue-form.team-name"></label>
+          <input type="text" name="team-name" value="tusharc.dev">
+        </div>
+
+      </form>
     </div>
 
   </div>

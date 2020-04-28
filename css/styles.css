@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@800&family=Varela+Round&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@700&family=Varela+Round&display=swap');
 
 /* - Global Styles - */
 
@@ -24,19 +24,20 @@ body {
 
 h1 {
   text-align: center;
-  font-size: 1.8rem;
+  font-size: 1.6rem;
 }
 
 h2 {
   text-align: center;
-  font-size: 1.6rem;
+  font-size: 1.4rem;
 }
 
 h4 {
   text-align: center;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   font-weight: normal;
   line-height: 1rem;
+  margin-block-end: 0.5rem;
 }
 
 .nook-phone {
@@ -46,7 +47,7 @@ h4 {
   margin: 16px auto;
   border-radius: 40px;
   padding: 16px 0px;
-  padding-bottom: 16px;
+  padding-bottom: 40px;
   background: rgb(131, 185, 255);
   color: #686868;
   overflow: hidden;
@@ -111,11 +112,10 @@ h4 {
 
 .dialog-box p {
   font-family: 'Raleway', sans-serif;
-  font-weight: 800;
   font-size: 1rem;
   color: #837865;
   letter-spacing: 0.2px;
-  line-height: 1.8rem;
+  line-height: 1.6rem;
   margin: 0.5rem 15px;
   order: 2;
 }
@@ -151,6 +151,20 @@ h4 {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.input__form__row {
+  background: white;
+  display: flex;
+  flex-direction: row;
+  flex-flow: row wrap;
+  align-items: center;
+  max-width: 800px;
+}
+
+.rescue_input {
+  text-align: center;
+  padding: 16px;
 }
 
 .form__row {
@@ -350,21 +364,21 @@ input[type=number] {
 .rescue-symbol, .rescue-placeholder {
   border: 0px solid white;
   border-radius: 15px;
-  font-size: 2.4rem;
+  font-size: 2rem;
   font-family: inherit;
   font-weight: bold;
   -webkit-text-stroke: 1px black;
   color: white;
   transition: 0.2s all;
-  background-size: 60px 60px;
-  height: 60px;
-  width: 60px;
+  background-size: 50px 50px;
+  height: 50px;
+  width: 50px;
   padding-top: 10px;
 }
 
 .rescue-symbol:hover, .rescue-placeholder:hover, input:hover {
   background: #F5F8FF;  /* TODO better blue */
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05), 0 3px 6px rgba(0, 0, 0, 0.09);
+  background-size: contain;
 }
 
 .rescue-invalid {
@@ -617,22 +631,6 @@ input#submit-code {
   to {bottom: 0; opacity: 0;}
 }
 
-/* Cloud SVG placement */
-.parallax>use:nth-child(1) {
-  transform: translate3d(-30px, 0, 0);
-}
-
-.parallax>use:nth-child(2) {
-  transform: translate3d(-90px, 0, 0);
-}
-
-.parallax>use:nth-child(3) {
-  transform: translate3d(45px, 0, 0);
-}
-
-.parallax>use:nth-child(4) {
-  transform: translate3d(20px, 0, 0);
-}
 
 /*Shrinking for mobile*/
 @media (max-width: 768px) {

@@ -26,6 +26,19 @@
     "title": "Rescue Password Generator",
     "description": "Want to go on a custom mission? Build it here!"
   },
+  "rescue-form": {
+    "dungeon": "Dungeon:",
+    "floor": "Floor:",
+    "team-name": "Team Name:",
+    "reward": {
+      "name": "Reward Type",
+      "deluxe": "Deluxe",
+      "special": "Special",
+      "regular": "Regular"
+    },
+    "pokemon": "Pokemon",
+    "gender": "Gender"
+  },
   "patterns": {
     "title": "Previous Pattern",
     "description": "What was last week's turnip price pattern?<i>(This affects your pattern)</i>",
