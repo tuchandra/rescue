@@ -1,0 +1,25 @@
+{
+  "name": "pmdrtdx-rescue",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "postcss css/tailwind.css -o generated/tailwind.css",
+    "watch": "watch 'npm run build:css' ./layouts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adamwathan/my-tailwind-project.git"
+  },
+  "keywords": [],
+  "author": "Tushar Chandra",
+  "license": "MIT",
+  "homepage": "https:/tusharc.dev/rescue/",
+  "dependencies": {
+    "@tailwindcss/custom-forms": "^0.2.1",
+    "autoprefixer": "^9.6.1",
+    "postcss-cli": "^6.1.2",
+    "tailwindcss": "^1.0.4",
+    "watch": "^1.0.2"
+  }
+}
