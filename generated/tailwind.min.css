@@ -794,26 +794,26 @@ img {
 }
 
 .symbol-fire {
-  background-image: url('/img/symbol_fire.png');
+  background-image: url('../img/symbol_fire.png');
   -webkit-text-stroke: 1px black;
 }
 
 .symbol-heart {
-  background-image: url('/img/symbol_heart.png');
+  background-image: url('../img/symbol_heart.png');
   -webkit-text-stroke: 1px black;
 }
 
 .symbol-water {
-  background-image: url('/img/symbol_water.png');
+  background-image: url('../img/symbol_water.png');
   -webkit-text-stroke: 1px black;
 }
 
 .symbol-emerald {
-  background-image: url('/img/symbol_emerald.png');
+  background-image: url('../img/symbol_emerald.png');
   -webkit-text-stroke: 1px black;
 }
 
 .symbol-star {
-  background-image: url('/img/symbol_star.png');
+  background-image: url('../img/symbol_star.png');
   -webkit-text-stroke: 1px black;
 }
