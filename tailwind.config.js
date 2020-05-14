@@ -13,5 +13,6 @@ module.exports = {
     'index.html',
     'js/script.js',
     'tailwind.config.js',
+    'tailwind.css',
   ],
 }
