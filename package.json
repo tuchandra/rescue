@@ -6,7 +6,7 @@
   "scripts": {
     "build": "postcss css/tailwind.css -o generated/tailwind.css",
     "watch": "watch 'npm run build:css' ./layouts",
-    "prod": "cross-env NODE_ENV=production postcss css/tailwind.css -o generated/tailwind.min.css"
+    "prod": "cross-env NODE_ENV=production postcss css/tailwind.css -o generated/tailwind.css"
   },
   "repository": {
     "type": "git",
