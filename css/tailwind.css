@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+
+.symbol {
+    @apply w-12 h-12 my-1 bg-gray-400 rounded-lg bg-contain text-white text-3xl font-bold;
+}
+
+.symbol:hover {
+    @apply bg-gray-300
+}
+
+@tailwind utilities;
+
+.symbol-fire {
+    background-image: url('../img/symbol_fire.png');
+    -webkit-text-stroke: 1px black;
+}
+
+.symbol-heart {
+    background-image: url('../img/symbol_heart.png');
+    -webkit-text-stroke: 1px black;
+
+}
+.symbol-water {
+    background-image: url('../img/symbol_water.png');
+    -webkit-text-stroke: 1px black;
+}
+.symbol-emerald {
+    background-image: url('../img/symbol_emerald.png');
+    -webkit-text-stroke: 1px black;
+}
+.symbol-star {
+    background-image: url('../img/symbol_star.png');
+    -webkit-text-stroke: 1px black;
+}
