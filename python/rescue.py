@@ -26,7 +26,7 @@ from __future__ import annotations
 import string
 import time
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Dict, List, Tuple
 
 import romdata
@@ -276,6 +276,65 @@ def crc32(bytes):
     return sum ^ 0xFFFFFFFF
 
 
+def get_code_components(origcode: List[int], decoded_code: List[int]) -> Dict[str, Any]:
+    """
+    From the original code and decoded (post-shuffle/bitpack/crypto) code, read off the
+    pieces of the code (e.g., dungeon, floor, etc.).
+
+    Details
+    -------
+    Both rescue and revival passwords have:
+     - timestamp (32 bit, unixtime)
+     - type (0 for rescue, 1 for revival)
+     - an unknown bit (always 0?)
+     - team name (11 * 8 bits, padded at the end with 0s if needed)
+
+    Rescue passwords will additionally have:
+     - dungeon (7 bits)
+     - floor (7)
+     - last pokemon to faint (11)
+     - gender (2)
+     - reward (2)
+     - another unknown bit
+
+    The rescue passwords will have a "revive" value that's computed as a crc32 hash
+    of the *original* password. Revival passwords, meanwhile, have this "revive"
+    value encoded in the password directly.
+    """
+
+    info = {}
+    info["code_checksum"] = decoded_code[0]
+    info["calculated_checksum"] = checksum(decoded_code[1:])
+
+    reader = BitstreamReader(decoded_code[1:])
+    info["timestamp"] = reader.read(32)
+    info["type"] = reader.read(1)
+    info["unk1"] = reader.read(1)
+
+    team_name = []
+    for x in range(12):
+        team_name.append(reader.read(9))
+    info["team_name"] = team_name
+
+    if info["type"] == 0:  # rescue password
+        info["dungeon"] = reader.read(7)
+        info["floor"] = reader.read(7)
+        info["pokemon"] = reader.read(11)
+        info["gender"] = reader.read(2)
+        info["reward"] = reader.read(2)
+        info["unk2"] = reader.read(1)
+
+        # this is the only part that requires the original code
+        charcode = ""
+        for x in origcode:
+            charcode += romdata.charmap[x]
+        info["revive"] = crc32(charcode.encode("utf8")) & 0x3FFFFFFF
+    else:  # revival password
+        info["revive"] = reader.read(30)
+
+    return info
+
+
 class RescueCode:
     """
     Rescue code / password object without all the baggage from last time.
@@ -352,38 +411,7 @@ class RescueCode:
         decoded_code = apply_crypto(repacked_code, encrypt=False)
         print(decoded_code)
 
-        # Read off the different parts of the code
-        info = {}
-        info["code_checksum"] = decoded_code[0]
-        info["calculated_checksum"] = checksum(decoded_code[1:])
-
-        reader = BitstreamReader(decoded_code[1:])
-        info["timestamp"] = reader.read(32)
-        info["type"] = reader.read(1)
-        info["unk1"] = reader.read(1)
-
-        team_name = []
-        for x in range(12):
-            team_name.append(reader.read(9))
-        info["team_name"] = team_name
-
-        if info["type"] == 0:  # rescue password
-            info["dungeon"] = reader.read(7)
-            info["floor"] = reader.read(7)
-            info["pokemon"] = reader.read(11)
-            info["gender"] = reader.read(2)
-            info["reward"] = reader.read(2)
-            info["unk2"] = reader.read(1)
-
-            # this part requires the original code
-            charcode = ""
-            for x in self.numbers:
-                print(x)
-                charcode += romdata.charmap[x]
-            info["revive"] = crc32(charcode.encode("utf8")) & 0x3FFFFFFF
-        else:
-            info["revive"] = reader.read(30)
-
+        info = get_code_components(self.numbers, decoded_code)
         print(info)
 
 
