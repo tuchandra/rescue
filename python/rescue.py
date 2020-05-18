@@ -280,148 +280,6 @@ def apply_crypto(code: List[int], encrypt: bool = False) -> List[int]:
 
 class RescueCode:
     """
-    Class for rescue code requests.
-    """
-
-    SCRAMBLE = {
-        # unshuffled index : shuffled index
-        0: 3,
-        1: 27,
-        2: 13,
-        3: 21,
-        4: 12,
-        5: 9,
-        6: 7,
-        7: 4,
-        8: 6,
-        9: 17,
-        10: 19,
-        11: 16,
-        12: 28,
-        13: 29,
-        14: 23,
-        15: 20,
-        16: 11,
-        17: 0,
-        18: 1,
-        19: 22,
-        20: 24,
-        21: 14,
-        22: 8,
-        23: 2,
-        24: 15,
-        25: 25,
-        26: 10,
-        27: 5,
-        28: 18,
-        29: 26,
-    }
-
-    def __init__(self, symbols: List[Symbol]):
-        """
-        List of Symbol objects to 
-        """
-
-        self.symbols: List[Symbol] = symbols
-        self.code_text = "".join(s.text for s in symbols)
-
-    @classmethod
-    def from_text(cls, text: str):
-        """Create rescue code from text string of 60 uninterrupted characters"""
-
-        if len(text) != 60:
-            raise ValueError(
-                "Length of text provided must be exactly 60 chars (30 symbols)"
-            )
-
-        symbols = [Symbol(text[i : i + 2]) for i in range(0, 60, 2)]
-        return cls(symbols)
-
-    def unshuffle(self) -> RescueCode:
-        """Unshuffle (part of the decryption)"""
-
-        scrambler = {v: k for k, v in RescueCode.SCRAMBLE.items()}
-        new_symbols = self.symbols[:]
-        for i, symbol in enumerate(self.symbols):
-            new_symbols[scrambler[i]] = symbol
-
-        return RescueCode(new_symbols)
-
-    def shuffle(self) -> RescueCode:
-        """Shuffle code (part of encryption)"""
-
-        scrambler = RescueCode.SCRAMBLE
-        new_symbols = self.symbols[:]
-        for i, symbol in enumerate(self.symbols):
-            new_symbols[scrambler[i]] = symbol
-
-        return RescueCode(new_symbols)
-
-    def to_numbers(self) -> List[int]:
-        """Convert code to array of numbers 0 - 63"""
-
-        alpha = Symbol.ALPHABET
-        return [alpha.index(s.text) for s in self.symbols]
-
-    def deserialize(self):
-        """Full deserialization of password (mostly just decrypting)"""
-
-        # Unshuffle first
-        code = self.unshuffle()
-        print(f"Unshuffled code: \n{code}")
-
-        # Unpack into 8-bit bytes (see BitstreamReader for details, this is complex)
-        reader = BitstreamReader(code.to_numbers(), 6)
-        new_code = []
-        while reader.remaining():
-            new_code.append(reader.read(8))
-
-        print(new_code)
-
-        # Seed RNG with first two bytes
-        seed = new_code[0] | (new_code[1] << 8)  # little endian
-        print(f"seed={seed}")
-        rng = DotNetRNG(seed)
-
-        # For each byte: advance RNG, subtract the random value from the byte,
-        # take the lower 8 bits, write back to array
-        for index in range(2, 23):
-            random = rng.next()
-            newvalue = new_code[index] - random
-            print(
-                f"random={random}, subtracted from {new_code[index]} gives newvalue={newvalue} => {newvalue & 0xFF}"
-            )
-            new_code[index] = newvalue & 0xFF
-
-        # For last byte, zero out the first four bits / just keep the bottom 4
-        new_code[22] = new_code[22] & 0xF
-        print(new_code)
-
-        # Calculate hash and validate (???)
-        ...
-
-        # Convert back into bitstream
-
-        return new_bitstream
-
-    def __repr__(self):
-        return (
-            " ".join(c.text for c in self.symbols[:5])
-            + " / "
-            + " ".join(c.text for c in self.symbols[5:10])
-            + " / "
-            + " ".join(c.text for c in self.symbols[10:15])
-            + "\n"
-            + " ".join(c.text for c in self.symbols[15:20])
-            + " / "
-            + " ".join(c.text for c in self.symbols[20:25])
-            + " / "
-            + " ".join(c.text for c in self.symbols[25:30])
-        )
-
-
-class NewRescueCode:
-    """
     Rescue code / password object without all the baggage from last time.
     """
 
@@ -474,19 +332,19 @@ class NewRescueCode:
     def __repr__(self):
         return f"NEW RESCUE CODE \n" f"{self.symbols}\n" f"{self.numbers}"
 
-    def shuffle(self, reverse=False) -> NewRescueCode:
+    def shuffle(self, reverse=False) -> RescueCode:
         """Shuffle (or unshuffle) symbols into another instance of this class"""
 
         if reverse:
-            scrambler = {v: k for k, v in NewRescueCode.SCRAMBLE.items()}
+            scrambler = {v: k for k, v in RescueCode.SCRAMBLE.items()}
         else:
-            scrambler = {k: v for k, v in NewRescueCode.SCRAMBLE.items()}
+            scrambler = {k: v for k, v in RescueCode.SCRAMBLE.items()}
 
         new_symbols = self.symbols[:]
         for i, symbol in enumerate(self.symbols):
             new_symbols[scrambler[i]] = symbol
 
-        return NewRescueCode("".join(new_symbols))
+        return RescueCode("".join(new_symbols))
 
     def decode(self) -> Dict[str, str]:
         """Decode code into dictionary of attributes (dungeon, floor, team, etc.)"""
@@ -499,5 +357,5 @@ class NewRescueCode:
 
 if __name__ == "__main__":
     ex = "Pf8sPs4fPhXe3f7h1h2h5s8w3h9s3fXh4wMw4s6w8w9w6e2f8h9f1h2s1w8h"
-    code = NewRescueCode(ex)
+    code = RescueCode(ex)
     info = code.decode()
