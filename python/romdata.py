@@ -7,6 +7,7 @@ charmap = romdata["charmap"]
 charmap_text = romdata["charmap_text"]
 crc32table = romdata["crc32table"]
 
+
 def get_index(table, index):
     if index >= len(romdata[table]):
         if table == "dungeons":
@@ -15,11 +16,7 @@ def get_index(table, index):
                 "const": "",
                 "floors": 0,
                 "name": "",
-                "valid": False
+                "valid": False,
             }
-        return {
-            "const": "",
-            "name": "",
-            "valid": False
-        }
+        return {"const": "", "name": "", "valid": False}
     return romdata[table][index]
