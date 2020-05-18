@@ -16,3 +16,10 @@ This is a static site deployed via Github Pages, hosted at [tusharc.dev/rescue](
 
 For deployment, we want to strip out the unnecessary Tailwind classes (see [docs](https://tailwindcss.com/docs/controlling-file-size)). We have to build the CSS *for production* using `npm run prod`, which uses (under the hood) PurgeCSS to get rid of unused classes.
 
+
+## Credits
+This app would not be possible without:
+ * [mid-kid/pmdrtdx_password](https://github.com/mid-kid/pmdrtdx_passwords), which is all the Python code we use to decode and encode passwords
+ * [Mozilla's Pyodide](https://github.com/iodide-project/pyodide), which lets us use Python compiled to WASM and run it in the browser
+ * [Tailwind CSS](tailwindcss.com/), which singlehandedly cured my fear of and disdain for CSS
+  
