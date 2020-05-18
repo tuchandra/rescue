@@ -7,8 +7,6 @@ import romdata
 from dataclasses import dataclass, field
 from typing import List
 
-import pysnooper
-
 
 class NumberGenerator:
     def __init__(self, seed):
@@ -117,6 +115,16 @@ class BitstreamReader:
 
 @dataclass()
 class BitstreamWriter:
+    """
+    Little-endian bitstream writer. This is the opposite of `BitstreamReader` and it's been
+    too long since I stepped through the source code myself, so this is what I'll leave
+    here.
+
+    This is also a dataclass purely for the sake of having a nice __repr__ (and being able
+    to cut down on LOC).
+
+    """
+
     bytesize: int
 
     # do not use these when initializing the class
@@ -152,6 +160,8 @@ def apply_shuffle(code, reverse=False):
             newcode[i] = code[x]
         else:
             newcode[x] = code[i]
+
+    print(newcode)
     return newcode
 
 
@@ -169,7 +179,10 @@ def apply_bitpack(code, origbits, destbits):
 
 
 def apply_crypto(code, encrypt=False):
-    # Apply the "crypto"
+    """
+    Encode / decode a password using the PRNG "crypto".
+    """
+
     newcode = [code[0], code[1]]
     gen = NumberGenerator(code[0] | code[1] << 8)
     print(f"seed: {code[0] | code[1] << 8}")
@@ -178,7 +191,7 @@ def apply_crypto(code, encrypt=False):
         if encrypt:
             val = -val
         newcode.append((x - val) & 0xFF)
-        print(f"rng: {x=}, {val=}, results in {(x - val) & 0xFF}")
+        print(f"rng: x={x}, val={val}, results in {(x - val) & 0xFF}")
 
     # Ignore the part that's 0 as a result of bitpacking
     remain = 8 - (len(code) * 8 % 6)
@@ -187,7 +200,8 @@ def apply_crypto(code, encrypt=False):
 
 
 def checksum(code):
-    # Calculate checksum
+    """Calculate checksum for code validation"""
+
     calc = code[0]
     for x in range(1, (len(code) - 1) // 2 * 2, 2):
         calc += code[x] | (code[x + 1] << 8)
@@ -213,16 +227,12 @@ def crc32(bytes):
 def decode(code):
     origcode = code
     code = apply_shuffle(code)
-    with pysnooper.snoop(depth=3):
-        code = apply_bitpack(code, 6, 8)
+    code = apply_bitpack(code, 6, 8)
     code = apply_crypto(code)
-    print(code)
 
     info = {}
     info["incl_checksum"] = code[0]
     info["calc_checksum"] = checksum(code[1:])
-
-    breakpoint()
 
     reader = BitstreamReader(code[1:])
     info["timestamp"] = reader.read(32)
@@ -244,7 +254,6 @@ def decode(code):
         for x in origcode:
             charcode += romdata.charmap[x]
         info["revive"] = crc32(charcode.encode("utf8")) & 0x3FFFFFFF
-        breakpoint()
     else:
         info["revive"] = reader.read(30)
 
