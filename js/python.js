@@ -20,7 +20,7 @@ async function importRescues() {
 	let rescues = await fetch("python/rescue.py", {mode: "no-cors"})
 	let rescues_txt = await rescues.text();
 	pyodide.runPython(rescues_txt);
-	console.log("Imported rescues/rescue.py!");
+	console.log("Imported python/rescue.py!");
 
 	pyodide.runPython(`
 		code = RescueCode.from_text('Pf8sPs4fPhXe3f7h1h2h5s8w3h9s3fXh4wMw4s6w8w9w6e2f8h9f1h2s1w8h')
