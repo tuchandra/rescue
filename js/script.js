@@ -4,7 +4,6 @@ var revivalPasswordOutput;
 window.onload = function() {
   rescuePasswordInput = document.getElementById("password-input");
   revivalPasswordOutput = document.getElementById("password-output");
-  this.console.log(rescuePasswordInput);
 }
 
 const addToPassword = function(element) {
