@@ -29,7 +29,10 @@ import time
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Tuple
 
-import romdata
+# import romdata
+from pyodide import eval_code, open_url
+
+eval_code(open_url("python/romdata.py").read(), globals())
 
 
 class DotNetRNG:
