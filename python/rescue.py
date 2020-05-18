@@ -61,7 +61,9 @@ class DotNetRNG:
             value = temp
 
         for _ in range(4):
-            for k in range(1, 56):
+            # This is the other difference: the source says this loop is 1 - 56, the reference
+            # implementation that *works* says 0 - 56 ... not sure.
+            for k in range(0, 56):
                 self.state[k] -= self.state[1 + (k + 30) % 55]
                 if self.state[k] < 0:
                     self.state[k] += 0x7FFFFFFF
@@ -74,7 +76,7 @@ class DotNetRNG:
 
     def next(self) -> int:
         self.i1 += 1
-        self.i2 += 2
+        self.i2 += 1
         if self.i1 >= 56:
             self.i1 = 1
         if self.i2 >= 56:
@@ -86,6 +88,32 @@ class DotNetRNG:
         self.state[self.i1] = num
 
         return num
+
+
+def get_symbol_index(symbol: str):
+    """
+    Get the index that a rescue symbol (3-heart, 1-star, etc.) represents, from 0 - 63.
+
+    `symbol` should be a two character string, case insensitive:
+     - first character is any of 1 - 9, P, M, D, X
+     - second character is f (fire), h (heart), w (water), e (emerald), s (star)
+    """
+
+    alphabet = (
+        [f"{i}F" for i in range(1, 10)]
+        + [f"{x}F" for x in ("P", "M", "D", "X")]
+        + [f"{i}H" for i in range(1, 10)]
+        + [f"{x}H" for x in ("P", "M", "D", "X")]
+        + [f"{i}W" for i in range(1, 10)]
+        + [f"{x}W" for x in ("P", "M", "D", "X")]
+        + [f"{i}E" for i in range(1, 10)]
+        + [f"{x}E" for x in ("P", "M", "D", "X")]
+        + [f"{i}S" for i in range(1, 10)]
+        + [f"{x}S" for x in ("P", "M", "D")]
+        # Note: Xs is never used!
+    )
+
+    return alphabet.index(symbol.upper())
 
 
 class Symbol:
@@ -140,28 +168,6 @@ class Symbol:
         """
 
         return Symbol.ALPHABET.index(self.text)
-
-    @property
-    def prev(self):
-        """Get the previous symbol in the alphabet"""
-
-        if self.text == "1f":
-            print(f"Asked for prev, but I am {self} - wrapping back around to the end")
-            return Symbol(Symbol.ALPHABET[-1])
-
-        return Symbol(Symbol.ALPHABET[self.pos - 1])
-
-    @property
-    def next(self):
-        """Get the next symbol in the alphabet"""
-
-        if self.text == "Ds":
-            print(
-                f"Asked for next, but I am {self} - wrapping back around to the start"
-            )
-            return Symbol(Symbol.ALPHABET[0])
-
-        return Symbol(Symbol.ALPHABET[self.pos + 1])
 
     def __repr__(self):
         return f"Symbol({self.first}{self.second})"
@@ -238,6 +244,40 @@ class BitstreamReader:
         return ret
 
 
+def apply_bitpack(code: List[int], origbits: int, destbits: int) -> List[int]:
+    """
+    Given array `code` of `origbits`-sized items, reinterpret as array of
+    `destbits`-sized items by packing into bitstream then unpacking in new size.
+    """
+
+    newcode = []
+    reader = BitstreamReader(code, origbits)
+    while reader.remaining():
+        newcode.append(reader.read(destbits))
+    return newcode
+
+
+def apply_crypto(code: List[int], encrypt: bool = False) -> List[int]:
+    """
+    Encode / decode a password using the PRNG "crypto".
+    """
+
+    newcode = [code[0], code[1]]
+    rng = DotNetRNG(code[0] | code[1] << 8)
+    print(f"seed: {code[0] | code[1] << 8}")
+    for x in code[2:]:
+        val = rng.next()
+        if encrypt:
+            val = -val
+        newcode.append((x - val) & 0xFF)
+        print(f"rng: x={x}, val={val}, results in {(x - val) & 0xFF}")
+
+    # Ignore the part that's 0 as a result of bitpacking
+    remain = 8 - (len(code) * 8 % 6)
+    newcode[len(newcode) - 1] &= (1 << remain) - 1
+    return newcode
+
+
 class RescueCode:
     """
     Class for rescue code requests.
@@ -279,7 +319,7 @@ class RescueCode:
 
     def __init__(self, symbols: List[Symbol]):
         """
-
+        List of Symbol objects to 
         """
 
         self.symbols: List[Symbol] = symbols
@@ -296,24 +336,6 @@ class RescueCode:
 
         symbols = [Symbol(text[i : i + 2]) for i in range(0, 60, 2)]
         return cls(symbols)
-
-    def inc_symbol(self, index: int) -> RescueCode:
-        """Return a RescueCode with one symbol incremented by one"""
-
-        new = self.symbols[index].next
-        new_symbols = self.symbols[:]  # to copy
-        new_symbols[index] = new
-
-        return RescueCode(new_symbols)
-
-    def dec_symbol(self, index: int) -> RescueCode:
-        """Return a RescueCode with one symbol deccremented by one"""
-
-        new = self.symbols[index].prev
-        new_symbols = self.symbols[:]  # to copy
-        new_symbols[index] = new
-
-        return RescueCode(new_symbols)
 
     def unshuffle(self) -> RescueCode:
         """Unshuffle (part of the decryption)"""
@@ -398,7 +420,84 @@ class RescueCode:
         )
 
 
+class NewRescueCode:
+    """
+    Rescue code / password object without all the baggage from last time.
+    """
+
+    SCRAMBLE = {
+        # unshuffled index : shuffled index
+        0: 3,
+        1: 27,
+        2: 13,
+        3: 21,
+        4: 12,
+        5: 9,
+        6: 7,
+        7: 4,
+        8: 6,
+        9: 17,
+        10: 19,
+        11: 16,
+        12: 28,
+        13: 29,
+        14: 23,
+        15: 20,
+        16: 11,
+        17: 0,
+        18: 1,
+        19: 22,
+        20: 24,
+        21: 14,
+        22: 8,
+        23: 2,
+        24: 15,
+        25: 25,
+        26: 10,
+        27: 5,
+        28: 18,
+        29: 26,
+    }
+
+    def __init__(self, text: str):
+        """Create rescue code from text string of 60 uninterrupted characters"""
+
+        if len(text) != 60:
+            raise ValueError(
+                "Length of text provided must be exactly 60 chars (30 symbols)"
+            )
+
+        text = text.upper()
+        self.symbols = [text[i : i + 2] for i in range(0, 60, 2)]
+        self.numbers = [get_symbol_index(s) for s in self.symbols]
+
+    def __repr__(self):
+        return f"NEW RESCUE CODE \n" f"{self.symbols}\n" f"{self.numbers}"
+
+    def shuffle(self, reverse=False) -> NewRescueCode:
+        """Shuffle (or unshuffle) symbols into another instance of this class"""
+
+        if reverse:
+            scrambler = {v: k for k, v in NewRescueCode.SCRAMBLE.items()}
+        else:
+            scrambler = {k: v for k, v in NewRescueCode.SCRAMBLE.items()}
+
+        new_symbols = self.symbols[:]
+        for i, symbol in enumerate(self.symbols):
+            new_symbols[scrambler[i]] = symbol
+
+        return NewRescueCode("".join(new_symbols))
+
+    def decode(self) -> Dict[str, str]:
+        """Decode code into dictionary of attributes (dungeon, floor, team, etc.)"""
+
+        unshuffled_code = self.shuffle(reverse=True)
+        new_numbers = apply_bitpack(unshuffled_code.numbers, 6, 8)
+        decoded_numbers = apply_crypto(new_numbers, encrypt=False)
+        print(decoded_numbers)
+
+
 if __name__ == "__main__":
     ex = "Pf8sPs4fPhXe3f7h1h2h5s8w3h9s3fXh4wMw4s6w8w9w6e2f8h9f1h2s1w8h"
-    code = RescueCode.from_text(ex)
-    info = code.deserialize()
+    code = NewRescueCode(ex)
+    info = code.decode()
