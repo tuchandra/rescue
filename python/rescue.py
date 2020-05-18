@@ -27,7 +27,9 @@ import string
 import time
 
 from dataclasses import dataclass
-from typing import List, Tuple
+from typing import Any, Dict, List, Tuple
+
+import romdata
 
 
 class DotNetRNG:
@@ -116,69 +118,6 @@ def get_symbol_index(symbol: str):
     return alphabet.index(symbol.upper())
 
 
-class Symbol:
-    """
-    Possible rescue character values, like 3-heart, 1-star, etc.
-
-    Initialized via two-character string, case insensitive:
-     - first character is any of 1 - 9, P, M, D, X
-     - second character is f (fire), h (heart), w (water), e (emerald), s (star)
-    """
-
-    ALPHABET = (
-        [f"{i}f" for i in range(1, 10)]
-        + [f"{x}f" for x in ("P", "M", "D", "X")]
-        + [f"{i}h" for i in range(1, 10)]
-        + [f"{x}h" for x in ("P", "M", "D", "X")]
-        + [f"{i}w" for i in range(1, 10)]
-        + [f"{x}w" for x in ("P", "M", "D", "X")]
-        + [f"{i}e" for i in range(1, 10)]
-        + [f"{x}e" for x in ("P", "M", "D", "X")]
-        + [f"{i}s" for i in range(1, 10)]
-        + [f"{x}s" for x in ("P", "M", "D")]
-        # Note: Xs is never used!
-    )
-
-    def __init__(self, text: str):
-        first = text[0].upper()
-        second = text[1].lower()
-
-        if first not in (string.digits + "PMDX") and first != "0":
-            raise ValueError("First char must be digit 1 - 9 or P, M, D, X")
-        if second not in "fhwes":
-            raise ValueError(
-                "Second char must be f (fire), h (heart), w (water), e (emerald), s (star)"
-            )
-
-        self.first = first
-        self.second = second
-
-    @property
-    def text(self):
-        """Symbol text; Symbol(1f) => '1f'"""
-
-        return self.first + self.second
-
-    @property
-    def pos(self):
-        """
-        The alphabet goes 1 - 9, P, M, D, X for fire, heart, water, emerald, star.
-
-        1f = 0, 2f = 1, ... Xs = 64. Compute the position 0 - 64.
-        """
-
-        return Symbol.ALPHABET.index(self.text)
-
-    def __repr__(self):
-        return f"Symbol({self.first}{self.second})"
-
-    def __eq__(self, other):
-        if not isinstance(other, Symbol):
-            return False
-
-        return self.text == other.text
-
-
 @dataclass()
 class BitstreamReader:
     """
@@ -244,6 +183,38 @@ class BitstreamReader:
         return ret
 
 
+@dataclass()
+class BitstreamWriter:
+    """
+    Little-endian bitstream writer. This is the opposite of `BitstreamReader` and it's been
+    too long since I stepped through the source code myself, so I don't have much info on this.
+
+    This is also a dataclass purely for the sake of having a nice __repr__ (and being able
+    to cut down on LOC).
+
+    """
+
+    bytesize: int
+
+    # do not use these when initializing the class
+    bytes: List[int] = field(default_factory=list)
+    bits: int = 0
+    value: int = 0
+
+    def finish(self):
+        if self.bits > 0:
+            self.bytes.append(self.value & ((1 << self.bytesize) - 1))
+        return self.bytes
+
+    def write(self, value, bits):
+        self.value |= (value & ((1 << bits) - 1)) << self.bits
+        self.bits += bits
+        while self.bits >= self.bytesize:
+            self.bytes.append(self.value & ((1 << self.bytesize) - 1))
+            self.value >>= self.bytesize
+            self.bits -= self.bytesize
+
+
 def apply_bitpack(code: List[int], origbits: int, destbits: int) -> List[int]:
     """
     Given array `code` of `origbits`-sized items, reinterpret as array of
@@ -276,6 +247,33 @@ def apply_crypto(code: List[int], encrypt: bool = False) -> List[int]:
     remain = 8 - (len(code) * 8 % 6)
     newcode[len(newcode) - 1] &= (1 << remain) - 1
     return newcode
+
+
+def checksum(code: List[int]) -> int:
+    """Calculate checksum for code validation"""
+
+    calc = code[0]
+    for x in range(1, (len(code) - 1) // 2 * 2, 2):
+        calc += code[x] | (code[x + 1] << 8)
+    if len(code) % 2 == 0:
+        calc += code[len(code) - 1]
+
+    calc = ((calc >> 16) & 0xFFFF) + (calc & 0xFFFF)
+    calc += calc >> 16
+    calc = ((calc >> 8) & 0xFF) + (calc & 0xFF)
+    calc += calc >> 8
+    calc &= 0xFF
+    calc ^= 0xFF
+    return calc
+
+
+def crc32(bytes):
+    """What is this? Some kind of validation check?"""
+
+    sum = 0xFFFFFFFF
+    for x in bytes:
+        sum = romdata.crc32table[(sum & 0xFF) ^ x] ^ (sum >> 8)
+    return sum ^ 0xFFFFFFFF
 
 
 class RescueCode:
@@ -346,13 +344,47 @@ class RescueCode:
 
         return RescueCode("".join(new_symbols))
 
-    def decode(self) -> Dict[str, str]:
+    def decode(self) -> Dict[str, Any]:
         """Decode code into dictionary of attributes (dungeon, floor, team, etc.)"""
 
         unshuffled_code = self.shuffle(reverse=True)
-        new_numbers = apply_bitpack(unshuffled_code.numbers, 6, 8)
-        decoded_numbers = apply_crypto(new_numbers, encrypt=False)
-        print(decoded_numbers)
+        repacked_code = apply_bitpack(unshuffled_code.numbers, 6, 8)
+        decoded_code = apply_crypto(repacked_code, encrypt=False)
+        print(decoded_code)
+
+        # Read off the different parts of the code
+        info = {}
+        info["code_checksum"] = decoded_code[0]
+        info["calculated_checksum"] = checksum(decoded_code[1:])
+
+        reader = BitstreamReader(decoded_code[1:])
+        info["timestamp"] = reader.read(32)
+        info["type"] = reader.read(1)
+        info["unk1"] = reader.read(1)
+
+        team_name = []
+        for x in range(12):
+            team_name.append(reader.read(9))
+        info["team_name"] = team_name
+
+        if info["type"] == 0:  # rescue password
+            info["dungeon"] = reader.read(7)
+            info["floor"] = reader.read(7)
+            info["pokemon"] = reader.read(11)
+            info["gender"] = reader.read(2)
+            info["reward"] = reader.read(2)
+            info["unk2"] = reader.read(1)
+
+            # this part requires the original code
+            charcode = ""
+            for x in self.numbers:
+                print(x)
+                charcode += romdata.charmap[x]
+            info["revive"] = crc32(charcode.encode("utf8")) & 0x3FFFFFFF
+        else:
+            info["revive"] = reader.read(30)
+
+        print(info)
 
 
 if __name__ == "__main__":
