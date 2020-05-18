@@ -338,7 +338,7 @@ class RescueCode:
         if reverse:
             scrambler = {v: k for k, v in RescueCode.SCRAMBLE.items()}
         else:
-            scrambler = {k: v for k, v in RescueCode.SCRAMBLE.items()}
+            scrambler = RescueCode.SCRAMBLE.items()
 
         new_symbols = self.symbols[:]
         for i, symbol in enumerate(self.symbols):
