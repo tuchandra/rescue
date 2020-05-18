@@ -17,13 +17,14 @@ async function testPython() {
 
 async function importRescues() {
 	// Load rescue module, try to create test code
-	let rescues = await fetch("python/rescue.py", {mode: "no-cors"})
-	let rescues_txt = await rescues.text();
-	pyodide.runPython(rescues_txt);
-	console.log("Imported python/rescue.py!");
+	let gamedata = await fetch("python/gamedata.json", { mode: "no-cors" }).then(x => x.text());
+	let romdata = await fetch("python/romdata.py", { mode: "no-cors" }).then(x => x.text());
+	let rescues = await fetch("python/rescue.py", { mode: "no-cors" }).then(x => x.text());
+	pyodide.runPython(romdata);
+	pyodide.runPython(rescues);
 
 	pyodide.runPython(`
-		code = RescueCode.from_text('Pf8sPs4fPhXe3f7h1h2h5s8w3h9s3fXh4wMw4s6w8w9w6e2f8h9f1h2s1w8h')
+		code = RescueCode('Pf8sPs4fPhXe3f7h1h2h5s8w3h9s3fXh4wMw4s6w8w9w6e2f8h9f1h2s1w8h')
 		print(code)
 	`);
 };
