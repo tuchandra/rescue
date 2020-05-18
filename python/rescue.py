@@ -92,7 +92,22 @@ class DotNetRNG:
         return num
 
 
-def get_symbol_index(symbol: str):
+SYMBOL_ALPHABET = (
+    [f"{i}F" for i in range(1, 10)]
+    + [f"{x}F" for x in ("P", "M", "D", "X")]
+    + [f"{i}H" for i in range(1, 10)]
+    + [f"{x}H" for x in ("P", "M", "D", "X")]
+    + [f"{i}W" for i in range(1, 10)]
+    + [f"{x}W" for x in ("P", "M", "D", "X")]
+    + [f"{i}E" for i in range(1, 10)]
+    + [f"{x}E" for x in ("P", "M", "D", "X")]
+    + [f"{i}S" for i in range(1, 10)]
+    + [f"{x}S" for x in ("P", "M", "D")]
+    # Note: Xs is never used!
+)
+
+
+def get_index_of_symbol(symbol: str):
     """
     Get the index that a rescue symbol (3-heart, 1-star, etc.) represents, from 0 - 63.
 
@@ -101,21 +116,13 @@ def get_symbol_index(symbol: str):
      - second character is f (fire), h (heart), w (water), e (emerald), s (star)
     """
 
-    alphabet = (
-        [f"{i}F" for i in range(1, 10)]
-        + [f"{x}F" for x in ("P", "M", "D", "X")]
-        + [f"{i}H" for i in range(1, 10)]
-        + [f"{x}H" for x in ("P", "M", "D", "X")]
-        + [f"{i}W" for i in range(1, 10)]
-        + [f"{x}W" for x in ("P", "M", "D", "X")]
-        + [f"{i}E" for i in range(1, 10)]
-        + [f"{x}E" for x in ("P", "M", "D", "X")]
-        + [f"{i}S" for i in range(1, 10)]
-        + [f"{x}S" for x in ("P", "M", "D")]
-        # Note: Xs is never used!
-    )
+    return SYMBOL_ALPHABET.index(symbol.upper())
 
-    return alphabet.index(symbol.upper())
+
+def get_symbol_from_index(i: int):
+    """Get the symbol at index i; silly function."""
+
+    return SYMBOL_ALPHABET[i]
 
 
 @dataclass()
@@ -194,7 +201,7 @@ class BitstreamWriter:
 
     """
 
-    bytesize: int
+    bytesize: int = 8
 
     # do not use these when initializing the class
     bytes: List[int] = field(default_factory=list)
@@ -213,6 +220,24 @@ class BitstreamWriter:
             self.bytes.append(self.value & ((1 << self.bytesize) - 1))
             self.value >>= self.bytesize
             self.bits -= self.bytesize
+
+
+def apply_shuffle(code, reverse=False):
+    # Shuffle the array around
+    shuffle = [
+        # fmt:off
+        3, 27, 13, 21, 12, 9, 7, 4, 6, 17, 19, 16, 28, 29, 23,
+        20, 11, 0, 1, 22, 24, 14, 8, 2, 15, 25, 10, 5, 18, 26,
+        # fmt: on
+    ]
+    newcode = [None] * len(shuffle)
+    for i, x in enumerate(shuffle):
+        if not reverse:
+            newcode[i] = code[x]
+        else:
+            newcode[x] = code[i]
+
+    return newcode
 
 
 def apply_bitpack(code: List[int], origbits: int, destbits: int) -> List[int]:
@@ -335,6 +360,42 @@ def get_code_components(origcode: List[int], decoded_code: List[int]) -> Dict[st
     return info
 
 
+def encode_code_components(info: Dict[str, Any], keep_checksum: bool = False):
+    """
+    Given code info (e.g., dungeon, floor, etc.), generate a rescue or revival code.
+    """
+
+    writer = BitstreamWriter()
+    writer.write(info["timestamp"], 32)
+    writer.write(info["type"], 1)
+    writer.write(info["unk1"], 1)
+    for x in range(12):
+        if x < len(info["team_name"]):
+            writer.write(info["team_name"][x], 9)
+        else:
+            writer.write(0, 9)
+    if info["type"] == 0:
+        writer.write(info["dungeon"], 7)
+        writer.write(info["floor"], 7)
+        writer.write(info["pokemon"], 11)
+        writer.write(info["gender"], 2)
+        writer.write(info["reward"], 2)
+        writer.write(info["unk2"], 1)
+    else:
+        writer.write(info["revive"], 30)
+
+    code = writer.finish()
+    if keep_checksum:
+        code = [info["incl_checksum"]] + code
+    else:
+        code = [checksum(code)] + code
+    code = apply_crypto(code, encrypt=True)
+    code = apply_bitpack(code, 8, 6)
+    code = apply_shuffle(code, reverse=True)
+
+    return code
+
+
 class RescueCode:
     """
     Rescue code / password object without all the baggage from last time.
@@ -384,7 +445,7 @@ class RescueCode:
 
         text = text.upper()
         self.symbols = [text[i : i + 2] for i in range(0, 60, 2)]
-        self.numbers = [get_symbol_index(s) for s in self.symbols]
+        self.numbers = [get_index_of_symbol(s) for s in self.symbols]
 
     def __repr__(self):
         return f"NEW RESCUE CODE \n" f"{self.symbols}\n" f"{self.numbers}"
@@ -406,13 +467,21 @@ class RescueCode:
     def decode(self) -> Dict[str, Any]:
         """Decode code into dictionary of attributes (dungeon, floor, team, etc.)"""
 
-        unshuffled_code = self.shuffle(reverse=True)
-        repacked_code = apply_bitpack(unshuffled_code.numbers, 6, 8)
+        unshuffled_code = apply_shuffle(self.numbers)
+        repacked_code = apply_bitpack(unshuffled_code, 6, 8)
         decoded_code = apply_crypto(repacked_code, encrypt=False)
         print(decoded_code)
 
         info = get_code_components(self.numbers, decoded_code)
         print(info)
+
+        # Create revival password
+        revival_info = dict(**info)
+        revival_info["type"] = 1
+        revival = encode_code_components(revival_info)
+        revival_symbols = [get_symbol_from_index(i) for i in revival]
+        print(revival)
+        print(revival_symbols)
 
 
 if __name__ == "__main__":
