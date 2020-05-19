@@ -12,216 +12,216 @@
   <base href="/rescue/">
 
   <link rel="stylesheet" href="generated/tailwind.css">
-  <script src="js/script.js"></script>
   <script src="js/pyodide.js"></script>
-  <script src="js/python.js"></script>
+  <script src="js/script.js"></script>
 
 </head>
 
 <body class="bg-blue-200 container mx-auto">
   <div class=""">
     <!-- Pelliper message -->
-    <div class="text-center py-4 lg:px-4">
-      <div class="p-2 bg-orange-200 items-center leading-none rounded-lg flex inline-flex">
-        <img src="img/pelliper_smile.png" class="flex rounded-lg h-24 px-6">
-        <span class="mr-2 text-lg text-left text-gray-800 leading-6">
-          Hello! Welcome to the Rescue Team DX password generator!
-          <br>
-          This app lets you generate <span class="font-bold">revival password</span> when you faint in a dungeon.
-          <br>
-          Or you can generate <span class="font-bold">rescue passwords</span> to go on as many missions as you want.
-        </span>
+    <div class=" text-center py-4 lg:px-4">
+    <div class="p-2 bg-orange-200 items-center leading-none rounded-lg flex inline-flex">
+      <img src="img/pelliper_smile.png" class="flex rounded-lg h-24 px-6">
+      <span class="mr-2 text-lg text-left text-gray-800 leading-6">
+        Hello! Welcome to the Rescue Team DX password generator!
+        <br>
+        This app lets you generate <span class="font-bold">revival password</span> when you faint in a dungeon.
+        <br>
+        Or you can generate <span class="font-bold">rescue passwords</span> to go on as many missions as you want.
+      </span>
+    </div>
+  </div>
+
+  <div class="max-w-4xl text-center items-center container">
+    <div class="text-4xl text-gray-800 font-bold bg-blue-400 rounded-t-full">
+      Revival Password Generator
+    </div>
+    <div class="bg-gray-100">
+      <div class="text-xl py-2">
+        Fainted in a dungeon? Enter your rescue password using the keyboard below!
       </div>
+
+      <div id="password-keyboard">
+        <div class="py-1 px-4">
+          <button class="symbol symbol-fire" type="button" onclick="addToPassword(this)">1</button>
+          <button class="symbol symbol-fire" type="button" onclick="addToPassword(this)">2</button>
+          <button class="symbol symbol-fire" type="button" onclick="addToPassword(this)">3</button>
+          <button class="symbol symbol-fire" type="button" onclick="addToPassword(this)">4</button>
+          <button class="symbol symbol-fire" type="button" onclick="addToPassword(this)">5</button>
+          <button class="symbol symbol-fire" type="button" onclick="addToPassword(this)">6</button>
+          <button class="symbol symbol-fire" type="button" onclick="addToPassword(this)">7</button>
+          <button class="symbol symbol-fire" type="button" onclick="addToPassword(this)">8</button>
+          <button class="symbol symbol-fire" type="button" onclick="addToPassword(this)">9</button>
+          <button class="symbol symbol-fire" type="button" onclick="addToPassword(this)">P</button>
+          <button class="symbol symbol-fire" type="button" onclick="addToPassword(this)">M</button>
+          <button class="symbol symbol-fire" type="button" onclick="addToPassword(this)">D</button>
+          <button class="symbol symbol-fire" type="button" onclick="addToPassword(this)">X</button>
+        </div>
+        <div class="py-1 px-4">
+          <button class="symbol symbol-heart" type="button">1</button>
+          <button class="symbol symbol-heart" type="button" onclick="addToPassword(this)">2</button>
+          <button class="symbol symbol-heart" type="button" onclick="addToPassword(this)">3</button>
+          <button class="symbol symbol-heart" type="button" onclick="addToPassword(this)">4</button>
+          <button class="symbol symbol-heart" type="button" onclick="addToPassword(this)">5</button>
+          <button class="symbol symbol-heart" type="button" onclick="addToPassword(this)">6</button>
+          <button class="symbol symbol-heart" type="button" onclick="addToPassword(this)">7</button>
+          <button class="symbol symbol-heart" type="button" onclick="addToPassword(this)">8</button>
+          <button class="symbol symbol-heart" type="button" onclick="addToPassword(this)">9</button>
+          <button class="symbol symbol-heart" type="button" onclick="addToPassword(this)">P</button>
+          <button class="symbol symbol-heart" type="button" onclick="addToPassword(this)">M</button>
+          <button class="symbol symbol-heart" type="button" onclick="addToPassword(this)">D</button>
+          <button class="symbol symbol-heart" type="button" onclick="addToPassword(this)">X</button>
+        </div>
+        <div class="py-1 px-4">
+          <button class="symbol symbol-water" type="button" onclick="addToPassword(this)">1</button>
+          <button class="symbol symbol-water" type="button" onclick="addToPassword(this)">2</button>
+          <button class="symbol symbol-water" type="button" onclick="addToPassword(this)">3</button>
+          <button class="symbol symbol-water" type="button" onclick="addToPassword(this)">4</button>
+          <button class="symbol symbol-water" type="button" onclick="addToPassword(this)">5</button>
+          <button class="symbol symbol-water" type="button" onclick="addToPassword(this)">6</button>
+          <button class="symbol symbol-water" type="button" onclick="addToPassword(this)">7</button>
+          <button class="symbol symbol-water" type="button" onclick="addToPassword(this)">8</button>
+          <button class="symbol symbol-water" type="button" onclick="addToPassword(this)">9</button>
+          <button class="symbol symbol-water" type="button" onclick="addToPassword(this)">P</button>
+          <button class="symbol symbol-water" type="button" onclick="addToPassword(this)">M</button>
+          <button class="symbol symbol-water" type="button" onclick="addToPassword(this)">D</button>
+          <button class="symbol symbol-water" type="button" onclick="addToPassword(this)">X</button>
+        </div>
+        <div class="py-1 px-4">
+          <button class="symbol symbol-emerald" type="button" onclick="addToPassword(this)">1</button>
+          <button class="symbol symbol-emerald" type="button" onclick="addToPassword(this)">2</button>
+          <button class="symbol symbol-emerald" type="button" onclick="addToPassword(this)">3</button>
+          <button class="symbol symbol-emerald" type="button" onclick="addToPassword(this)">4</button>
+          <button class="symbol symbol-emerald" type="button" onclick="addToPassword(this)">5</button>
+          <button class="symbol symbol-emerald" type="button" onclick="addToPassword(this)">6</button>
+          <button class="symbol symbol-emerald" type="button" onclick="addToPassword(this)">7</button>
+          <button class="symbol symbol-emerald" type="button" onclick="addToPassword(this)">8</button>
+          <button class="symbol symbol-emerald" type="button" onclick="addToPassword(this)">9</button>
+          <button class="symbol symbol-emerald" type="button" onclick="addToPassword(this)">P</button>
+          <button class="symbol symbol-emerald" type="button" onclick="addToPassword(this)">M</button>
+          <button class="symbol symbol-emerald" type="button" onclick="addToPassword(this)">D</button>
+          <button class="symbol symbol-emerald" type="button" onclick="addToPassword(this)">X</button>
+        </div>
+        <div class="py-1 px-4">
+          <button class="symbol symbol-star" type="button" onclick="addToPassword(this)">1</button>
+          <button class="symbol symbol-star" type="button" onclick="addToPassword(this)">2</button>
+          <button class="symbol symbol-star" type="button" onclick="addToPassword(this)">3</button>
+          <button class="symbol symbol-star" type="button" onclick="addToPassword(this)">4</button>
+          <button class="symbol symbol-star" type="button" onclick="addToPassword(this)">5</button>
+          <button class="symbol symbol-star" type="button" onclick="addToPassword(this)">6</button>
+          <button class="symbol symbol-star" type="button" onclick="addToPassword(this)">7</button>
+          <button class="symbol symbol-star" type="button" onclick="addToPassword(this)">8</button>
+          <button class="symbol symbol-star" type="button" onclick="addToPassword(this)">9</button>
+          <button class="symbol symbol-star" type="button" onclick="addToPassword(this)">P</button>
+          <button class="symbol symbol-star" type="button" onclick="addToPassword(this)">M</button>
+          <button class="symbol symbol-star" type="button" onclick="addToPassword(this)">D</button>
+          <button class="symbol symbol-star" type="button" onclick="addToPassword(this)">X</button>
+        </div>
+      </div>
+
+      <div id="password-input" class="py-4 flex flex-wrap justify-center">
+        <div name="class-of-five" class="py-2 px-2">
+          <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
+          <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
+          <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
+          <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
+          <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
+        </div>
+        <div name="class-of-five" class="py-2 px-2">
+          <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
+          <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
+          <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
+          <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
+          <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
+        </div>
+        <div name="class-of-five" class="py-2 px-2">
+          <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
+          <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
+          <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
+          <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
+          <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
+        </div>
+        <div name="class-of-five" class="py-2 px-2">
+          <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
+          <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
+          <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
+          <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
+          <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
+        </div>
+        <div name="class-of-five" class="py-2 px-2">
+          <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
+          <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
+          <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
+          <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
+          <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
+        </div>
+        <div name="class-of-five" class="py-2 px-2">
+          <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
+          <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
+          <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
+          <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
+          <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
+        </div>
+      </div>
+
+      <div class="text-xl pb-4 hidden" id="password-too-short">The password is too short!</div>
+
+      <button class="py-2 px-4 mb-4 rounded-full text-2xl text-gray-800 bg-blue-300"
+        onclick="submitPassword()">Submit!</button>
+
+      <div class="text-xl pb-4 hidden" id="revival-password-text">Here is your revival password!</div>
+
+      <div id="password-output" class="py-0 flex flex-wrap justify-center hidden">
+        <div class="py-2 px-2">
+          <button type="button"></button>
+          <button type="button"></button>
+          <button type="button"></button>
+          <button type="button"></button>
+          <button type="button"></button>
+        </div>
+        <div class="py-2 px-2">
+          <button type="button"></button>
+          <button type="button"></button>
+          <button type="button"></button>
+          <button type="button"></button>
+          <button type="button"></button>
+        </div>
+        <div class="py-2 px-2">
+          <button type="button"></button>
+          <button type="button"></button>
+          <button type="button"></button>
+          <button type="button"></button>
+          <button type="button"></button>
+        </div>
+        <div class="py-2 px-2">
+          <button type="button"></button>
+          <button type="button"></button>
+          <button type="button"></button>
+          <button type="button"></button>
+          <button type="button"></button>
+        </div>
+        <div class="py-2 px-2">
+          <button type="button"></button>
+          <button type="button"></button>
+          <button type="button"></button>
+          <button type="button"></button>
+          <button type="button"></button>
+        </div>
+        <div class="py-2 px-2">
+          <button type="button"></button>
+          <button type="button"></button>
+          <button type="button"></button>
+          <button type="button"></button>
+          <button type="button"></button>
+        </div>
+      </div>
+
     </div>
 
-    <div class="max-w-4xl text-center items-center container">
-      <div class="text-4xl text-gray-800 font-bold bg-blue-400 rounded-t-full">
-        Revival Password Generator
-      </div>
-      <div class="bg-gray-100">
-        <div class="text-xl py-2">
-          Fainted in a dungeon? Enter your rescue password using the keyboard below!
-        </div>
-
-        <div id="password-keyboard">
-          <div class="py-1 px-4">
-            <button class="symbol symbol-fire" type="button" onclick="addToPassword(this)">1</button>
-            <button class="symbol symbol-fire" type="button" onclick="addToPassword(this)">2</button>
-            <button class="symbol symbol-fire" type="button" onclick="addToPassword(this)">3</button>
-            <button class="symbol symbol-fire" type="button" onclick="addToPassword(this)">4</button>
-            <button class="symbol symbol-fire" type="button" onclick="addToPassword(this)">5</button>
-            <button class="symbol symbol-fire" type="button" onclick="addToPassword(this)">6</button>
-            <button class="symbol symbol-fire" type="button" onclick="addToPassword(this)">7</button>
-            <button class="symbol symbol-fire" type="button" onclick="addToPassword(this)">8</button>
-            <button class="symbol symbol-fire" type="button" onclick="addToPassword(this)">9</button>
-            <button class="symbol symbol-fire" type="button" onclick="addToPassword(this)">P</button>
-            <button class="symbol symbol-fire" type="button" onclick="addToPassword(this)">M</button>
-            <button class="symbol symbol-fire" type="button" onclick="addToPassword(this)">D</button>
-            <button class="symbol symbol-fire" type="button" onclick="addToPassword(this)">X</button>
-          </div>
-          <div class="py-1 px-4">
-            <button class="symbol symbol-heart" type="button">1</button>
-            <button class="symbol symbol-heart" type="button" onclick="addToPassword(this)">2</button>
-            <button class="symbol symbol-heart" type="button" onclick="addToPassword(this)">3</button>
-            <button class="symbol symbol-heart" type="button" onclick="addToPassword(this)">4</button>
-            <button class="symbol symbol-heart" type="button" onclick="addToPassword(this)">5</button>
-            <button class="symbol symbol-heart" type="button" onclick="addToPassword(this)">6</button>
-            <button class="symbol symbol-heart" type="button" onclick="addToPassword(this)">7</button>
-            <button class="symbol symbol-heart" type="button" onclick="addToPassword(this)">8</button>
-            <button class="symbol symbol-heart" type="button" onclick="addToPassword(this)">9</button>
-            <button class="symbol symbol-heart" type="button" onclick="addToPassword(this)">P</button>
-            <button class="symbol symbol-heart" type="button" onclick="addToPassword(this)">M</button>
-            <button class="symbol symbol-heart" type="button" onclick="addToPassword(this)">D</button>
-            <button class="symbol symbol-heart" type="button" onclick="addToPassword(this)">X</button>
-          </div>
-          <div class="py-1 px-4">
-            <button class="symbol symbol-water" type="button" onclick="addToPassword(this)">1</button>
-            <button class="symbol symbol-water" type="button" onclick="addToPassword(this)">2</button>
-            <button class="symbol symbol-water" type="button" onclick="addToPassword(this)">3</button>
-            <button class="symbol symbol-water" type="button" onclick="addToPassword(this)">4</button>
-            <button class="symbol symbol-water" type="button" onclick="addToPassword(this)">5</button>
-            <button class="symbol symbol-water" type="button" onclick="addToPassword(this)">6</button>
-            <button class="symbol symbol-water" type="button" onclick="addToPassword(this)">7</button>
-            <button class="symbol symbol-water" type="button" onclick="addToPassword(this)">8</button>
-            <button class="symbol symbol-water" type="button" onclick="addToPassword(this)">9</button>
-            <button class="symbol symbol-water" type="button" onclick="addToPassword(this)">P</button>
-            <button class="symbol symbol-water" type="button" onclick="addToPassword(this)">M</button>
-            <button class="symbol symbol-water" type="button" onclick="addToPassword(this)">D</button>
-            <button class="symbol symbol-water" type="button" onclick="addToPassword(this)">X</button>
-          </div>
-          <div class="py-1 px-4">
-            <button class="symbol symbol-emerald" type="button" onclick="addToPassword(this)">1</button>
-            <button class="symbol symbol-emerald" type="button" onclick="addToPassword(this)">2</button>
-            <button class="symbol symbol-emerald" type="button" onclick="addToPassword(this)">3</button>
-            <button class="symbol symbol-emerald" type="button" onclick="addToPassword(this)">4</button>
-            <button class="symbol symbol-emerald" type="button" onclick="addToPassword(this)">5</button>
-            <button class="symbol symbol-emerald" type="button" onclick="addToPassword(this)">6</button>
-            <button class="symbol symbol-emerald" type="button" onclick="addToPassword(this)">7</button>
-            <button class="symbol symbol-emerald" type="button" onclick="addToPassword(this)">8</button>
-            <button class="symbol symbol-emerald" type="button" onclick="addToPassword(this)">9</button>
-            <button class="symbol symbol-emerald" type="button" onclick="addToPassword(this)">P</button>
-            <button class="symbol symbol-emerald" type="button" onclick="addToPassword(this)">M</button>
-            <button class="symbol symbol-emerald" type="button" onclick="addToPassword(this)">D</button>
-            <button class="symbol symbol-emerald" type="button" onclick="addToPassword(this)">X</button>
-          </div>
-          <div class="py-1 px-4">
-            <button class="symbol symbol-star" type="button" onclick="addToPassword(this)">1</button>
-            <button class="symbol symbol-star" type="button" onclick="addToPassword(this)">2</button>
-            <button class="symbol symbol-star" type="button" onclick="addToPassword(this)">3</button>
-            <button class="symbol symbol-star" type="button" onclick="addToPassword(this)">4</button>
-            <button class="symbol symbol-star" type="button" onclick="addToPassword(this)">5</button>
-            <button class="symbol symbol-star" type="button" onclick="addToPassword(this)">6</button>
-            <button class="symbol symbol-star" type="button" onclick="addToPassword(this)">7</button>
-            <button class="symbol symbol-star" type="button" onclick="addToPassword(this)">8</button>
-            <button class="symbol symbol-star" type="button" onclick="addToPassword(this)">9</button>
-            <button class="symbol symbol-star" type="button" onclick="addToPassword(this)">P</button>
-            <button class="symbol symbol-star" type="button" onclick="addToPassword(this)">M</button>
-            <button class="symbol symbol-star" type="button" onclick="addToPassword(this)">D</button>
-            <button class="symbol symbol-star" type="button" onclick="addToPassword(this)">X</button>
-          </div>
-        </div>
-
-        <div id="password-input" class="py-4 flex flex-wrap justify-center">
-          <div name="class-of-five" class="py-2 px-2">
-            <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
-            <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
-            <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
-            <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
-            <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
-          </div>
-          <div name="class-of-five" class="py-2 px-2">
-            <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
-            <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
-            <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
-            <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
-            <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
-          </div>
-          <div name="class-of-five" class="py-2 px-2">
-            <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
-            <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
-            <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
-            <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
-            <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
-          </div>
-          <div name="class-of-five" class="py-2 px-2">
-            <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
-            <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
-            <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
-            <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
-            <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
-          </div>
-          <div name="class-of-five" class="py-2 px-2">
-            <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
-            <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
-            <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
-            <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
-            <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
-          </div>
-          <div name="class-of-five" class="py-2 px-2">
-            <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
-            <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
-            <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
-            <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
-            <button class="symbol rescue-placeholder" type="button">&nbsp;</button>
-          </div>
-        </div>
-
-        <div class="text-xl pb-4 hidden" id="password-too-short">The password is too short!</div>
-
-        <button class="py-2 px-4 mb-4 rounded-full text-2xl text-gray-800 bg-blue-300" onclick="submitPassword()">Submit!</button>
-
-        <div class="text-xl pb-4 hidden" id="revival-password-text">Here is your revival password!</div>
-
-        <div id="password-output" class="py-0 flex flex-wrap justify-center hidden">
-          <div class="py-2 px-2">
-            <button type="button"></button>
-            <button type="button"></button>
-            <button type="button"></button>
-            <button type="button"></button>
-            <button type="button"></button>
-          </div>
-          <div class="py-2 px-2">
-            <button type="button"></button>
-            <button type="button"></button>
-            <button type="button"></button>
-            <button type="button"></button>
-            <button type="button"></button>
-          </div>
-          <div class="py-2 px-2">
-            <button type="button"></button>
-            <button type="button"></button>
-            <button type="button"></button>
-            <button type="button"></button>
-            <button type="button"></button>
-          </div>
-          <div class="py-2 px-2">
-            <button type="button"></button>
-            <button type="button"></button>
-            <button type="button"></button>
-            <button type="button"></button>
-            <button type="button"></button>
-          </div>
-          <div class="py-2 px-2">
-            <button type="button"></button>
-            <button type="button"></button>
-            <button type="button"></button>
-            <button type="button"></button>
-            <button type="button"></button>
-          </div>
-          <div class="py-2 px-2">
-            <button type="button"></button>
-            <button type="button"></button>
-            <button type="button"></button>
-            <button type="button"></button>
-            <button type="button"></button>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Footer -->
-      <div class="py-4 bg-blue-300 rounded-b-full"></div>
-    </div>
+    <!-- Footer -->
+    <div class="py-4 bg-blue-300 rounded-b-full"></div>
+  </div>
 
   <div class="max-w-4xl text-center items-center container py-12">
     <div class="text-4xl text-gray-800 font-bold bg-blue-300 rounded-t-full">

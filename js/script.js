@@ -1,12 +1,44 @@
+// import * as python from "./python.js";
+
 var rescuePasswordInput;
 var revivalPasswordOutput;
 
-window.onload = function() {
+window.onload = function () {
   rescuePasswordInput = document.getElementById("password-input");
   revivalPasswordOutput = document.getElementById("password-output");
+  pyImportRescues();
 }
 
-const addToPassword = function(element) {
+async function pyImportRescues() {
+  // Load rescue module, try to create test code
+  let rescues = await fetch("python/rescue.py", { mode: "no-cors" }).then(x => x.text());
+  pyodide.runPython(rescues);
+  pyodide.runPython(`
+    code = RescueCode('Pf8sPs4fPhXe3f7h1h2h5s8w3h9s3fXh4wMw4s6w8w9w6e2f8h9f1h2s1w8h')
+    print(code)
+  `);
+};
+
+function pyGenerateRevivalPassword(passwordSymbols) {
+  // passwordSymbols: array of 30 2-char symbols
+  // return: array of 30 2-char symbols
+
+  window.passwordSymbols = passwordSymbols
+
+  revival = pyodide.runPython(`
+    # This is necessary for Python to see the JS object
+    from js import passwordSymbols;
+
+    code = RescueCode("".join(passwordSymbols))
+    revival = code.decode()
+    revival
+  `);
+
+  console.log(revival);
+  return revival;
+}
+
+const addToPassword = function (element) {
   newElement = element.cloneNode(true);
   newElement.setAttribute("onclick", "removeFromPassword(this)");
   replaceFirstPlaceholder(newElement);
@@ -30,7 +62,7 @@ const removeFromPassword = function (element) {
   element.textContent = "\xa0";
 }
 
-const replaceFirstPlaceholder = function(element) {
+const replaceFirstPlaceholder = function (element) {
   // Find the first empty space in the rescue code input; put element in it
   for (group of rescuePasswordInput.children) {
     for (space of group.children) {
@@ -42,13 +74,15 @@ const replaceFirstPlaceholder = function(element) {
   }
 }
 
-const getBackgroundName = function(char) {
+const getBackgroundName = function (char) {
   // Convert char "h" -> background name "heart" etc.
+  char = char.toLowerCase()
+
   if (char === "f") {
     return "fire";
   } else if (char === "h") {
     return "heart";
-  } else  if (char === "w") {
+  } else if (char === "w") {
     return "water";
   } else if (char === "e") {
     return "emerald";
@@ -59,7 +93,7 @@ const getBackgroundName = function(char) {
   throw new Error("invalid background symbol, must be f / h / w / e / s")
 }
 
-const textToSymbol = function(text) {
+const textToSymbol = function (text) {
   // Convert text 4e, Xw, etc. to rescue symbol HTML element
   let label = text[0];
   let background = getBackgroundName(text[1]);
@@ -73,7 +107,7 @@ const textToSymbol = function(text) {
   return newElement;
 }
 
-const fillRevivalPassword = function(symbols) {
+const fillRevivalPassword = function (symbols) {
   // Fill the password output with a provided set of text symbols
 
   var i = 0;
@@ -87,7 +121,7 @@ const fillRevivalPassword = function(symbols) {
 }
 
 
-const getEnteredSymbols = function() {
+const getEnteredSymbols = function () {
   // Get the symbols that the user entered
   // Throw error if it's incomplete, but do not do any additional validation
   // (that part gets offloaded to Python)
@@ -106,17 +140,17 @@ const getEnteredSymbols = function() {
   return symbols;
 }
 
-const symbolsToText = function(symbols) {
+const symbolsToText = function (symbols) {
   // Convert HTML collection of rescue symbols to the text represented by each,
   // e.g., 4e 5s Xf ...
 
   return [
-    "1f", "2f", "3f", "4f", "5f",
-    "1e", "2e", "3e", "4e", "5e",
-    "1s", "2s", "3s", "4s", "5s",
-    "1w", "2w", "3w", "4w", "5w",
-    "1h", "2h", "3h", "4h", "5h",
-    "Xs", "Xh", "Xe", "Xw", "Xf",
+    "1F", "2F", "3F", "4F", "5F",
+    "1E", "2E", "3E", "4E", "5E",
+    "1S", "2S", "3S", "4S", "5S",
+    "1W", "2W", "3W", "4W", "5W",
+    "1H", "2H", "3H", "4H", "5H",
+    "PS", "XH", "XE", "XW", "XF",
   ]
 
   let text = new Array();
@@ -129,12 +163,8 @@ const symbolsToText = function(symbols) {
   return text;
 }
 
-const pyGenerateRevivalPassword = function(text) {
-  // Interface into Python function to generate a revival password
-  return text;
-}
 
-const submitPassword = function() {
+const submitPassword = function () {
   // Submit an entered password for decoding - send to Pyodide to validate
   try {
     var passwordSymbols = getEnteredSymbols();
@@ -156,7 +186,6 @@ const submitPassword = function() {
   }
 
   // Send password to Python
-  // TODO: actually do this; for now it returns a default password
   let text = symbolsToText(passwordSymbols);
   try {
     var revivalPassword = pyGenerateRevivalPassword(text);

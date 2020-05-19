@@ -265,13 +265,11 @@ def apply_crypto(code: List[int], encrypt: bool = False) -> List[int]:
 
     newcode = [code[0], code[1]]
     rng = DotNetRNG(code[0] | code[1] << 8)
-    print(f"seed: {code[0] | code[1] << 8}")
     for x in code[2:]:
         val = rng.next()
         if encrypt:
             val = -val
         newcode.append((x - val) & 0xFF)
-        print(f"rng: x={x}, val={val}, results in {(x - val) & 0xFF}")
 
     # Ignore the part that's 0 as a result of bitpacking
     remain = 8 - (len(code) * 8 % 6)
@@ -541,7 +539,7 @@ class RescueCode:
         self.numbers = [get_index_of_symbol(s) for s in self.symbols]
 
     def __repr__(self):
-        return f"NEW RESCUE CODE \n" f"{self.symbols}\n" f"{self.numbers}"
+        return f"RescueCode({self.symbols})"
 
     def shuffle(self, reverse=False) -> RescueCode:
         """Shuffle (or unshuffle) symbols into another instance of this class"""
@@ -557,13 +555,12 @@ class RescueCode:
 
         return RescueCode("".join(new_symbols))
 
-    def decode(self) -> Dict[str, Any]:
+    def decode(self) -> List[str]:
         """Decode code into dictionary of attributes (dungeon, floor, team, etc.)"""
 
         unshuffled_code = apply_shuffle(self.numbers)
         repacked_code = apply_bitpack(unshuffled_code, 6, 8)
         decoded_code = apply_crypto(repacked_code, encrypt=False)
-        print(decoded_code)
 
         rescueinfo = decode_code_to_info(self.numbers, decoded_code)
         print(rescueinfo)
@@ -575,10 +572,13 @@ class RescueCode:
             team_name=rescueinfo.team_name,  # TODO fix
             revive=rescueinfo.revive,
         )
-        revival = encode_info_as_code(revival)
-        revival_symbols = [get_symbol_from_index(i) for i in revival]
         print(revival)
+
+        revival_code = encode_info_as_code(revival)
+        revival_symbols = [get_symbol_from_index(i) for i in revival_code]
         print(revival_symbols)
+
+        return revival_symbols
 
 
 if __name__ == "__main__":
