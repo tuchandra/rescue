@@ -1,38 +1,39 @@
 """
 rescue.py
 
-My attempt at cracking the PMD RT:DX rescue code generator.
-
-
-Classes
--------
-DotNetRNG
-    Implementation of the .NET random number generator, which PMD RT:DX
-    uses since it is a Unity game.
-
-Symbol
-    Data class for storing one symbol within a rescue code, like 1/fire or
-    X/star.
-
-RescueCode
-    Class for all the logic associated with rescue codes / passwords (terms
-    used interchangeably). Includes methods to read from a text representation,
-    convert to a bitstring, and decrypt. Not all of it works yet.
+Utilities for encoding and decoding rescue passwords.
 
 """
 
 from __future__ import annotations
 
+import json
 import string
 import time
 
+from datetime import datetime
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Tuple, Union
 
-# import romdata
-from pyodide import eval_code, open_url
+from pyodide import open_url
 
-eval_code(open_url("python/romdata.py").read(), globals())
+# This is the equivalent of
+# with open("gamedata.json") as f: romdata = json.load(f)
+romdata = json.loads(open_url("python/gamedata.json").read())
+
+
+def get_romdata_index(table, index):
+    if index >= len(romdata[table]):
+        if table == "dungeons":
+            return {
+                "ascending": False,
+                "const": "",
+                "floors": 0,
+                "name": "",
+                "valid": False,
+            }
+        return {"const": "", "name": "", "valid": False}
+    return romdata[table][index]
 
 
 class DotNetRNG:
@@ -225,8 +226,9 @@ class BitstreamWriter:
             self.bits -= self.bytesize
 
 
-def apply_shuffle(code, reverse=False):
-    # Shuffle the array around
+def apply_shuffle(code: List[int], reverse=False) -> List[int]:
+    """Apply shuffle (for decrypting) or unshuffle (for encrypting) to array elements"""
+
     shuffle = [
         # fmt:off
         3, 27, 13, 21, 12, 9, 7, 4, 6, 17, 19, 16, 28, 29, 23,
@@ -300,11 +302,39 @@ def crc32(bytes):
 
     sum = 0xFFFFFFFF
     for x in bytes:
-        sum = romdata.crc32table[(sum & 0xFF) ^ x] ^ (sum >> 8)
+        sum = romdata["crc32table"][(sum & 0xFF) ^ x] ^ (sum >> 8)
     return sum ^ 0xFFFFFFFF
 
 
-def get_code_components(origcode: List[int], decoded_code: List[int]) -> Dict[str, Any]:
+@dataclass
+class RescueCodeComponents:
+    checksum: int
+    timestamp: int
+    team_name: List[int]
+    dungeon: int
+    floor: int
+    pokemon: int
+    gender: int
+    reward: int
+    revive: int
+    unk1: int = 0
+    unk2: int = 0
+    type: int = 0
+    calculated_checksum: Optional[int] = None
+
+
+@dataclass
+class RevivalCodeComponents:
+    timestamp: int
+    team_name: List[int]
+    revive: int
+    unk1: int = 0
+    type: int = 1
+
+
+def decode_code_to_info(
+    origcode: List[int], decoded_code: List[int]
+) -> RescueCodeComponents:
     """
     From the original code and decoded (post-shuffle/bitpack/crypto) code, read off the
     pieces of the code (e.g., dungeon, floor, etc.).
@@ -331,7 +361,7 @@ def get_code_components(origcode: List[int], decoded_code: List[int]) -> Dict[st
     """
 
     info = {}
-    info["code_checksum"] = decoded_code[0]
+    info["checksum"] = decoded_code[0]
     info["calculated_checksum"] = checksum(decoded_code[1:])
 
     reader = BitstreamReader(decoded_code[1:])
@@ -355,48 +385,108 @@ def get_code_components(origcode: List[int], decoded_code: List[int]) -> Dict[st
         # this is the only part that requires the original code
         charcode = ""
         for x in origcode:
-            charcode += romdata.charmap[x]
+            charcode += romdata["charmap"][x]
         info["revive"] = crc32(charcode.encode("utf8")) & 0x3FFFFFFF
+
+        return RescueCodeComponents(**info)
+
     else:  # revival password
         info["revive"] = reader.read(30)
+        return RevivalCodeComponents(**info)
 
-    return info
 
-
-def encode_code_components(info: Dict[str, Any], keep_checksum: bool = False):
+def encode_info_as_code(info: Union[RescueCodeComponents, RevivalCodeComponents]):
     """
     Given code info (e.g., dungeon, floor, etc.), generate a rescue or revival code.
     """
 
     writer = BitstreamWriter()
-    writer.write(info["timestamp"], 32)
-    writer.write(info["type"], 1)
-    writer.write(info["unk1"], 1)
+    writer.write(info.timestamp, 32)
+    writer.write(info.type, 1)
+    writer.write(info.unk1, 1)
     for x in range(12):
-        if x < len(info["team_name"]):
-            writer.write(info["team_name"][x], 9)
+        if x < len(info.team_name):
+            writer.write(info.team_name[x], 9)
         else:
             writer.write(0, 9)
-    if info["type"] == 0:
-        writer.write(info["dungeon"], 7)
-        writer.write(info["floor"], 7)
-        writer.write(info["pokemon"], 11)
-        writer.write(info["gender"], 2)
-        writer.write(info["reward"], 2)
-        writer.write(info["unk2"], 1)
+    if info.type == 0:
+        writer.write(info.dungeon, 7)
+        writer.write(info.floor, 7)
+        writer.write(info.pokemon, 11)
+        writer.write(info.gender, 2)
+        writer.write(info.reward, 2)
+        writer.write(info.unk2, 1)
     else:
-        writer.write(info["revive"], 30)
+        writer.write(info.revive, 30)
 
     code = writer.finish()
-    if keep_checksum:
-        code = [info["incl_checksum"]] + code
-    else:
-        code = [checksum(code)] + code
+    code = [checksum(code)] + code
+
     code = apply_crypto(code, encrypt=True)
     code = apply_bitpack(code, 8, 6)
     code = apply_shuffle(code, reverse=True)
 
     return code
+
+
+def print_info(info):
+    info_text = ""
+
+    info_text += "Checksum: 0x%02X (calculated: 0x%02X)\n" % (
+        info["incl_checksum"],
+        info["calc_checksum"],
+    )
+    info_text += "Timestamp: %s\n" % datetime.utcfromtimestamp(info["timestamp"])
+    info_text += "Revive: %s\n" % (info["type"] == 1)
+    info_text += "Unk1: 0x%X\n" % info["unk1"]
+
+    info_text += "Team Name: "
+    for char in info["team"]:
+        if char == 0:
+            break
+        if char < 402:
+            info_text += romdata["charmap_text"][char]
+        else:
+            info_text += "*"
+    info_text += "\n"
+
+    if info["type"] == 0:
+        dungeon = get_romdata_index("dungeons", info["dungeon"])
+        info_text += "Dungeon (%d): %s" % (info["dungeon"], dungeon["name"])
+        if not dungeon["valid"]:
+            info_text += " (!)"
+        info_text += "\n"
+
+        floor = "%dF" % info["floor"]
+        if not dungeon["ascending"]:
+            floor = "B" + floor
+        info_text += "Floor: %s" % floor
+        if info["floor"] == 0 or info["floor"] > dungeon["floors"]:
+            info_text += " (!)"
+        info_text += "\n"
+
+        pokemon = get_romdata_index("pokemon", info["pokemon"])
+        info_text += "Pokemon (%d): %s" % (info["pokemon"], pokemon["name"])
+        if not pokemon["valid"]:
+            info_text += " (!)"
+        info_text += "\n"
+
+        gender = get_romdata_index("genders", info["gender"])
+        info_text += "Gender: %s" % gender["name"]
+        if not gender["valid"]:
+            info_text += " (!)"
+        info_text += "\n"
+
+        reward = get_romdata_index("rewards", info["reward"])
+        info_text += "Reward: %s" % reward["name"]
+        if not reward["valid"]:
+            info_text += " (!)"
+        info_text += "\n"
+
+        info_text += "Unk2: 0x%X\n" % info["unk2"]
+
+    info_text += "Revive value: 0x%08X\n" % info["revive"]
+    return info_text
 
 
 class RescueCode:
@@ -475,13 +565,17 @@ class RescueCode:
         decoded_code = apply_crypto(repacked_code, encrypt=False)
         print(decoded_code)
 
-        info = get_code_components(self.numbers, decoded_code)
-        print(info)
+        rescueinfo = decode_code_to_info(self.numbers, decoded_code)
+        print(rescueinfo)
 
         # Create revival password
-        revival_info = dict(**info)
-        revival_info["type"] = 1
-        revival = encode_code_components(revival_info)
+        revival = RevivalCodeComponents(
+            timestamp=int(datetime.now().timestamp()),
+            unk1=1,
+            team_name=rescueinfo.team_name,  # TODO fix
+            revive=rescueinfo.revive,
+        )
+        revival = encode_info_as_code(revival)
         revival_symbols = [get_symbol_from_index(i) for i in revival]
         print(revival)
         print(revival_symbols)
