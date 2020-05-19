@@ -142,45 +142,14 @@ const getEnteredSymbols = function () {
 
 const symbolsToText = function (symbols) {
   // Convert HTML collection of rescue symbols to the text represented by each,
-  // e.g., 4e 5s Xf ...
-
-  return [
-    "1F",
-    "2F",
-    "3F",
-    "4F",
-    "5F",
-    "1E",
-    "2E",
-    "3E",
-    "4E",
-    "5E",
-    "1S",
-    "2S",
-    "3S",
-    "4S",
-    "5S",
-    "1W",
-    "2W",
-    "3W",
-    "4W",
-    "5W",
-    "1H",
-    "2H",
-    "3H",
-    "4H",
-    "5H",
-    "PS",
-    "XH",
-    "XE",
-    "XW",
-    "XF",
-  ];
+  // e.g., 4E 5S XF ...
 
   let text = new Array();
   for (symbol of symbols) {
-    let label = symbol.getAttribute("label")[0];
-    let background = symbol.getAttribute("background")[0];
+    let label = symbol.innerText;
+
+    // turn symbol-heart into H, symbol-water into W, etc., this one is the second class
+    let background = symbol.classList[1].split("-")[1][0].toUpperCase();
     text.push(label.toUpperCase() + background);
   }
 
