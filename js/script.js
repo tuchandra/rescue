@@ -7,23 +7,25 @@ window.onload = function () {
   rescuePasswordInput = document.getElementById("password-input");
   revivalPasswordOutput = document.getElementById("password-output");
   pyImportRescues();
-}
+};
 
 async function pyImportRescues() {
   // Load rescue module, try to create test code
-  let rescues = await fetch("python/rescue.py", { mode: "no-cors" }).then(x => x.text());
+  let rescues = await fetch("python/rescue.py", { mode: "no-cors" }).then((x) =>
+    x.text()
+  );
   pyodide.runPython(rescues);
   pyodide.runPython(`
     code = RescueCode('Pf8sPs4fPhXe3f7h1h2h5s8w3h9s3fXh4wMw4s6w8w9w6e2f8h9f1h2s1w8h')
     print(code)
   `);
-};
+}
 
 function pyGenerateRevivalPassword(passwordSymbols) {
   // passwordSymbols: array of 30 2-char symbols
   // return: array of 30 2-char symbols
 
-  window.passwordSymbols = passwordSymbols
+  window.passwordSymbols = passwordSymbols;
 
   revival = pyodide.runPython(`
     # This is necessary for Python to see the JS object
@@ -54,13 +56,13 @@ const addToPassword = function (element) {
   // Remove invalid message
   tooShortMessage = document.getElementById("password-too-short");
   tooShortMessage.classList.add("hidden");
-}
+};
 
 const removeFromPassword = function (element) {
   // Replace symbol with a placeholder
   element.classList = ["symbol rescue-placeholder"];
   element.textContent = "\xa0";
-}
+};
 
 const replaceFirstPlaceholder = function (element) {
   // Find the first empty space in the rescue code input; put element in it
@@ -72,11 +74,11 @@ const replaceFirstPlaceholder = function (element) {
       }
     }
   }
-}
+};
 
 const getBackgroundName = function (char) {
   // Convert char "h" -> background name "heart" etc.
-  char = char.toLowerCase()
+  char = char.toLowerCase();
 
   if (char === "f") {
     return "fire";
@@ -90,8 +92,8 @@ const getBackgroundName = function (char) {
     return "star";
   }
 
-  throw new Error("invalid background symbol, must be f / h / w / e / s")
-}
+  throw new Error("invalid background symbol, must be f / h / w / e / s");
+};
 
 const textToSymbol = function (text) {
   // Convert text 4e, Xw, etc. to rescue symbol HTML element
@@ -105,7 +107,7 @@ const textToSymbol = function (text) {
   newElement.textContent = label;
 
   return newElement;
-}
+};
 
 const fillRevivalPassword = function (symbols) {
   // Fill the password output with a provided set of text symbols
@@ -117,9 +119,7 @@ const fillRevivalPassword = function (symbols) {
       i++;
     }
   }
-
-}
-
+};
 
 const getEnteredSymbols = function () {
   // Get the symbols that the user entered
@@ -138,20 +138,44 @@ const getEnteredSymbols = function () {
   }
 
   return symbols;
-}
+};
 
 const symbolsToText = function (symbols) {
   // Convert HTML collection of rescue symbols to the text represented by each,
   // e.g., 4e 5s Xf ...
 
   return [
-    "1F", "2F", "3F", "4F", "5F",
-    "1E", "2E", "3E", "4E", "5E",
-    "1S", "2S", "3S", "4S", "5S",
-    "1W", "2W", "3W", "4W", "5W",
-    "1H", "2H", "3H", "4H", "5H",
-    "PS", "XH", "XE", "XW", "XF",
-  ]
+    "1F",
+    "2F",
+    "3F",
+    "4F",
+    "5F",
+    "1E",
+    "2E",
+    "3E",
+    "4E",
+    "5E",
+    "1S",
+    "2S",
+    "3S",
+    "4S",
+    "5S",
+    "1W",
+    "2W",
+    "3W",
+    "4W",
+    "5W",
+    "1H",
+    "2H",
+    "3H",
+    "4H",
+    "5H",
+    "PS",
+    "XH",
+    "XE",
+    "XW",
+    "XF",
+  ];
 
   let text = new Array();
   for (symbol of symbols) {
@@ -161,8 +185,7 @@ const symbolsToText = function (symbols) {
   }
 
   return text;
-}
-
+};
 
 const submitPassword = function () {
   // Submit an entered password for decoding - send to Pyodide to validate
@@ -201,5 +224,4 @@ const submitPassword = function () {
   // Remove display:none
   document.getElementById("revival-password-text").classList.remove("hidden");
   revivalPasswordOutput.classList.remove("hidden");
-
-}
+};
