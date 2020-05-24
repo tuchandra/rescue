@@ -332,7 +332,7 @@ def crc32(bytes):
 
 
 @dataclass
-class RescueCodeComponents:
+class RescueCode:
     """
     Pieces of a rescue code.
 
@@ -510,7 +510,7 @@ class RescueCodeComponents:
 
 
 def code_to_symbols(
-    info: Union[RescueCodeComponents, RevivalCodeComponents]
+    info: Union[RescueCode, RevivalCode]
 ) -> List[str]:
     """
     Given code info (e.g., dungeon, floor, etc.), generate a rescue or revival code.
@@ -525,7 +525,7 @@ def code_to_symbols(
             writer.write(info.team_name[x], 9)
         else:
             writer.write(0, 9)
-    if isinstance(info, RescueCodeComponents):
+    if isinstance(info, RescueCode):
         writer.write(info.dungeon, 7)
         writer.write(info.floor, 7)
         writer.write(info.pokemon, 11)
@@ -548,6 +548,7 @@ def code_to_symbols(
 
 def get_team_name(team: List[int]) -> str:
     """Decode list of ints to readable team name using romdata"""
+
 
     team_name = ""
     for char in team:
@@ -577,7 +578,7 @@ def get_team_numbers(name: str) -> List[int]:
 
 
 @dataclass
-class RevivalCodeComponents:
+class RevivalCode:
     timestamp: int
     team_name: List[int]
     revive: int
@@ -585,14 +586,14 @@ class RevivalCodeComponents:
     type: int = 1
 
     @classmethod
-    def from_rescue_code(cls, rescue: RescueCodeComponents, team_name: str = None):
+    def from_rescue_code(cls, rescue: RescueCode, team_name: str = None):
         """Create revival code from a rescue code"""
 
         timestamp = int(datetime.now().timestamp())
         unk1 = 1
 
         # We need a list of ints to pass to the class, not a string; note that
-        # RescueCodeComponents already has the list of ints, but if a new name
+        # RescueCode already has the list of ints, but if a new name
         # is passed, we have to convert it
         if team_name is not None:
             team_numbers = get_team_numbers(team_name)
@@ -625,16 +626,16 @@ def rescue_password_from_text(text: str) -> Password:
     return numbers
 
 
-def get_revival_from_rescue(rescue: RescueCodeComponents) -> List[str]:
+def get_revival_from_rescue(rescue: RescueCode) -> List[str]:
     """Given a (valid) rescue code, generate a revival code."""
 
-    revival = RevivalCodeComponents.from_rescue_code(rescue)
+    revival = RevivalCode.from_rescue_code(rescue)
     return revival.to_symbols()
 
 
 if __name__ == "__main__":
     ex = "Pf8sPs4fPhXe3f7h1h2h5s8w3h9s3fXh4wMw4s6w8w9w6e2f8h9f1h2s1w8h"
     password = rescue_password_from_text(ex)
-    rescue = RescueCodeComponents.from_password(password)
-    revival = RevivalCodeComponents.from_rescue_code(rescue)
+    rescue = RescueCode.from_password(password)
+    revival = RevivalCode.from_rescue_code(rescue)
     print(revival)

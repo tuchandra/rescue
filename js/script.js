@@ -15,9 +15,9 @@ async function pyImportRescues() {
   pyodide.runPython(rescues);
   pyodide.runPython(`
     password = rescue_password_from_text('Pf8sPs4fPhXe3f7h1h2h5s8w3h9s3fXh4wMw4s6w8w9w6e2f8h9f1h2s1w8h')
-    rescue = RescueCodeComponents.from_password(password)
+    rescue = RescueCode.from_password(password)
     print(rescue.to_text())
-    revival = RevivalCodeComponents.from_rescue_code(rescue)
+    revival = RevivalCode.from_rescue_code(rescue)
     print(revival, code_to_symbols(revival))
   `);
 }
@@ -73,7 +73,7 @@ function pyGenerateRescuePassword(dungeon, floor, team) {
   let rescue = pyodide.runPython(`
     from js import dungeon, floor, team
 
-    rescue = RescueCodeComponents.from_scratch(dungeon_name=dungeon, floor=floor, team_name=team)
+    rescue = RescueCode.from_scratch(dungeon_name=dungeon, floor=floor, team_name=team)
     print(rescue.to_text())
 
     if not rescue.validate():
