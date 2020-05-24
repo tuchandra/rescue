@@ -348,9 +348,14 @@ class RescueCodeComponents:
     type: int = 0
 
     @classmethod
-    def from_password(cls, original: Password, decoded: Password):
+    def from_password(cls, password: Password):
         """Get rescue code components from original & decoded passwords"""
 
+        unshuffled = apply_shuffle(password)
+        repacked = apply_bitpack(unshuffled, 6, 8)
+        decoded = apply_crypto(repacked, encrypt=False)
+
+        # now we just have to decode everything
         info: Dict[str, Any] = {}
         info["checksum"] = decoded[0]
         info["calculated_checksum"] = checksum(decoded[1:])
@@ -374,7 +379,7 @@ class RescueCodeComponents:
 
         # this is the only part that requires the original code
         charcode = ""
-        for x in original:
+        for x in password:
             charcode += romdata["charmap"][x]
         info["revive"] = crc32(charcode.encode("utf8")) & 0x3FFFFFFF
 
@@ -423,6 +428,7 @@ class RescueCodeComponents:
         info_text = "\n".join(
             [
                 f"Checksum: 0x{self.checksum:02X} (calculated: {self.calculated_checksum:02X})",
+                f"Revive: 0x{self.revive:06X}",
                 f"Timestamp: {datetime.utcfromtimestamp(self.timestamp)}",
                 f"Team: {get_team_name(self.team_name)}",
                 f"Dungeon: {dungeon} {floor}",
@@ -528,64 +534,27 @@ class RevivalCodeComponents:
     unk1: int = 0
     type: int = 1
 
+    @classmethod
+    def from_rescue_code(cls, rescue: RescueCodeComponents):
+        """Create revival code from a rescue code"""
 
-def get_rescue_components(
-    origcode: Password, decoded_code: Password
-) -> RescueCodeComponents:
-    """
-    From the original code and decoded (post-shuffle/bitpack/crypto) code, read off the
-    pieces of the code (e.g., dungeon, floor, etc.).
+        timestamp = int(datetime.now().timestamp())
+        unk1 = 1
 
-    Details
-    -------
-    Both rescue and revival passwords have:
-     - timestamp (32 bit, unixtime)
-     - type (0 for rescue, 1 for revival)
-     - an unknown bit (always 0?)
-     - team name (11 * 8 bits, padded at the end with 0s if needed)
+        return cls(
+            timestamp=timestamp,
+            team_name=rescue.team_name,
+            revive=rescue.revive,
+            unk1=unk1,
+        )
 
-    Rescue passwords will additionally have:
-     - dungeon (7 bits)
-     - floor (7)
-     - last pokemon to faint (11)
-     - gender (2)
-     - reward (2)
-     - another unknown bit
+    def to_symbols(self) -> List[str]:
+        """Convert to list of password symbols, e.g., PH 1S etc."""
 
-    The rescue passwords will have a "revive" value that's computed as a crc32 hash
-    of the *original* password. Revival passwords, meanwhile, have this "revive"
-    value encoded in the password directly.
-    """
+        numbers = encode_info_as_code(self)
+        symbols = [get_symbol_from_index(i) for i in numbers]
 
-    info: Dict[str, Any] = {}
-    info["checksum"] = decoded_code[0]
-    info["calculated_checksum"] = checksum(decoded_code[1:])
-
-    reader = BitstreamReader(decoded_code[1:])
-    info["timestamp"] = reader.read(32)
-    info["type"] = reader.read(1)
-    info["unk1"] = reader.read(1)
-
-    team_name: List[int] = []
-    for x in range(12):
-        team_name.append(reader.read(9))
-    info["team_name"] = team_name
-
-    assert info["type"] == 0, "invalid rescue password"
-    info["dungeon"] = reader.read(7)
-    info["floor"] = reader.read(7)
-    info["pokemon"] = reader.read(11)
-    info["gender"] = reader.read(2)
-    info["reward"] = reader.read(2)
-    info["unk2"] = reader.read(1)
-
-    # this is the only part that requires the original code
-    charcode = ""
-    for x in origcode:
-        charcode += romdata["charmap"][x]
-    info["revive"] = crc32(charcode.encode("utf8")) & 0x3FFFFFFF
-
-    return RescueCodeComponents(**info)
+        return symbols
 
 
 def encode_info_as_code(info: Union[RescueCodeComponents, RevivalCodeComponents]):
@@ -640,73 +609,16 @@ def rescue_password_from_text(text: str) -> Password:
     return numbers
 
 
-def decode_rescue_password(password: Password) -> RescueCodeComponents:
-    """Decode a rescue password into components"""
-
-    unshuffled = apply_shuffle(password)
-    repacked = apply_bitpack(unshuffled, 6, 8)
-    decoded = apply_crypto(repacked, encrypt=False)
-
-    return RescueCodeComponents.from_password(password, decoded)
-
-    rescue_components = get_rescue_components(password, decoded)
-    print(rescue_components)
-    print(get_info_text(rescue_components))
-
-    # Create revival password
-    revival = RevivalCodeComponents(
-        timestamp=int(datetime.now().timestamp()),
-        unk1=1,
-        team_name=rescue_components.team_name,  # TODO fix
-        revive=rescue_components.revive,
-    )
-    print(revival)
-
-    revival_code = encode_info_as_code(revival)
-    revival_symbols = [get_symbol_from_index(i) for i in revival_code]
-    print(revival_symbols)
-
-    return revival_symbols
-
-
-def get_revival_from_rescue(components: RescueCodeComponents) -> List[str]:
+def get_revival_from_rescue(rescue: RescueCodeComponents) -> List[str]:
     """Given a (valid) rescue code, generate a revival code."""
 
-    return [
-        "1F",
-        "2F",
-        "3F",
-        "4F",
-        "5F",
-        "1E",
-        "2E",
-        "3E",
-        "4E",
-        "5E",
-        "1S",
-        "2S",
-        "3S",
-        "4S",
-        "5S",
-        "1W",
-        "2W",
-        "3W",
-        "4W",
-        "5W",
-        "1H",
-        "2H",
-        "3H",
-        "4H",
-        "5H",
-        "PS",
-        "XH",
-        "XE",
-        "XW",
-        "XF",
-    ]
+    revival = RevivalCodeComponents.from_rescue_code(rescue)
+    return revival.to_symbols()
 
 
 if __name__ == "__main__":
     ex = "Pf8sPs4fPhXe3f7h1h2h5s8w3h9s3fXh4wMw4s6w8w9w6e2f8h9f1h2s1w8h"
     password = rescue_password_from_text(ex)
-    info = decode_rescue_password(password)
+    rescue = RescueCodeComponents.from_password(password)
+    revival = RevivalCodeComponents.from_rescue_code(rescue)
+    print(revival)

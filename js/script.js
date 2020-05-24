@@ -14,9 +14,11 @@ async function pyImportRescues() {
   );
   pyodide.runPython(rescues);
   pyodide.runPython(`
-    code = rescue_password_from_text('Pf8sPs4fPhXe3f7h1h2h5s8w3h9s3fXh4wMw4s6w8w9w6e2f8h9f1h2s1w8h')
-    components = decode_rescue_password(code)
-    print(components.to_text())
+    password = rescue_password_from_text('Pf8sPs4fPhXe3f7h1h2h5s8w3h9s3fXh4wMw4s6w8w9w6e2f8h9f1h2s1w8h')
+    rescue = RescueCodeComponents.from_password(password)
+    print(rescue.to_text())
+    revival = RevivalCodeComponents.from_rescue_code(rescue)
+    print(revival, revival.to_symbols())
   `);
 }
 
@@ -51,7 +53,6 @@ function pyGenerateRevivalPassword(passwordSymbols) {
     from js import passwordSymbols;
 
     code = rescue_password_from_text("".join(passwordSymbols))
-    components = decode_rescue_password(code)
     print(components.to_text())
     print(components.validate())
 
