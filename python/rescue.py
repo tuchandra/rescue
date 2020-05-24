@@ -46,10 +46,10 @@ valid_rewards = {
     if info["valid"]
 }
 
-Password = List[int]
+Password = List[int]  # type hint
 
 
-def get_romdata_entry(table: str, index: int):
+def get_romdata_entry(table: str, index: int) -> str:
     """Get entry stored at an index within a particular (global) romdata table"""
 
     if index >= len(romdata[table]):
