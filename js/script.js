@@ -277,6 +277,8 @@ const submitRescueInfo = function () {
   } catch {
     // The password was invalid, probably because of floor being out of range
     document.getElementById("floor-invalid").classList.remove("hidden");
+    document.getElementById("generated-password").classList.add("hidden");
+    document.getElementById("rescue-password-text").classList.add("hidden");
     return;
   }
 
