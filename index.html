@@ -239,17 +239,66 @@
       </div>
 
       <div class="mt-4 pl-4 flex justify-center">
-        <select class="form-select m-4 inline-block w-1/4 text-xl">
+        <select class="form-select m-4 inline-block text-xl" id="rescue-dungeon">
           <option value="Tiny Woods">Tiny Woods</option>
           <option value="Sky Tower">Sky Tower</option>
           <option value="Purity Forest">Purity Forest</option>
         </select>
 
-        <input class="form-input m-4 inline-block w-1/12" rescue-placeholder="Floor">
+        <input class="form-input m-4 inline-block w-24 text-xl" placeholder="Floor" id="rescue-floor">
+        <input class="form-input m-4 inline-block text-xl" placeholder="Team Name (Optional)" id="rescue-team">
       </div>
 
-      <button class="py-2 px-16 my-4 rounded-full text-2xl text-gray-800 bg-blue-300">Go!</button>
+      <div class="text-xl pb-4 hidden" id="choose-a-floor">You must choose a floor!</div>
 
+      <button class="py-2 px-16 my-4 rounded-full text-2xl text-gray-800 bg-blue-300"
+        onclick="submitRescueInfo()">Go!</button>
+
+      <div class="text-xl pb-4 hidden" id="rescue-password-text">Here is your rescue password!</div>
+      <div id="generated-password" class="py-0 flex flex-wrap justify-center">
+        <div class="py-2 px-2">
+          <button type="button"></button>
+          <button type="button"></button>
+          <button type="button"></button>
+          <button type="button"></button>
+          <button type="button"></button>
+        </div>
+        <div class="py-2 px-2">
+          <button type="button"></button>
+          <button type="button"></button>
+          <button type="button"></button>
+          <button type="button"></button>
+          <button type="button"></button>
+        </div>
+        <div class="py-2 px-2">
+          <button type="button"></button>
+          <button type="button"></button>
+          <button type="button"></button>
+          <button type="button"></button>
+          <button type="button"></button>
+        </div>
+        <div class="py-2 px-2">
+          <button type="button"></button>
+          <button type="button"></button>
+          <button type="button"></button>
+          <button type="button"></button>
+          <button type="button"></button>
+        </div>
+        <div class="py-2 px-2">
+          <button type="button"></button>
+          <button type="button"></button>
+          <button type="button"></button>
+          <button type="button"></button>
+          <button type="button"></button>
+        </div>
+        <div class="py-2 px-2">
+          <button type="button"></button>
+          <button type="button"></button>
+          <button type="button"></button>
+          <button type="button"></button>
+          <button type="button"></button>
+        </div>
+      </div>
 
     </div>
 
