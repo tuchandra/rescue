@@ -46,6 +46,8 @@ valid_rewards = {
     if info["valid"]
 }
 
+Password = List[int]
+
 
 def get_romdata_entry(table: str, index: int):
     """Get entry stored at an index within a particular (global) romdata table"""
@@ -331,6 +333,36 @@ def crc32(bytes):
     return sum ^ 0xFFFFFFFF
 
 
+def get_team_name(team: List[int]) -> str:
+    """Decode list of ints to readable team name using romdata"""
+
+    team_name = ""
+    for char in team:
+        if char == 0:
+            break
+        if char < 402:
+            team_name += romdata["charmap_text"][char]
+        else:
+            team_name += "*"
+
+    return team_name
+
+
+def get_team_numbers(name: str) -> List[int]:
+    """Encode up-to-11-char team name into a list of ints using romdata"""
+
+    charmap = romdata["charmap_text"]
+
+    team_numbers = []
+    for char in name:
+        if char in charmap:
+            team_numbers.append(charmap.index(char))
+        else:
+            raise ValueError("Encoding team name {name} failed")
+
+    return team_numbers
+
+
 @dataclass
 class RescueCode:
     """
@@ -509,74 +541,6 @@ class RescueCode:
         return not "(!)" in self.to_text()
 
 
-def code_to_symbols(
-    info: Union[RescueCode, RevivalCode]
-) -> List[str]:
-    """
-    Given code info (e.g., dungeon, floor, etc.), generate a rescue or revival code.
-    """
-
-    writer = BitstreamWriter()
-    writer.write(info.timestamp, 32)
-    writer.write(info.type, 1)
-    writer.write(info.unk1, 1)
-    for x in range(12):
-        if x < len(info.team_name):
-            writer.write(info.team_name[x], 9)
-        else:
-            writer.write(0, 9)
-    if isinstance(info, RescueCode):
-        writer.write(info.dungeon, 7)
-        writer.write(info.floor, 7)
-        writer.write(info.pokemon, 11)
-        writer.write(info.gender, 2)
-        writer.write(info.reward, 2)
-        writer.write(info.unk2, 1)
-    else:
-        writer.write(info.revive, 30)
-
-    code = writer.finish()
-    code = [checksum(code)] + code
-
-    code = apply_crypto(code, encrypt=True)
-    code = apply_bitpack(code, 8, 6)
-    code = apply_shuffle(code, reverse=True)
-
-    symbols = [get_symbol_from_index(i) for i in code]
-    return symbols
-
-
-def get_team_name(team: List[int]) -> str:
-    """Decode list of ints to readable team name using romdata"""
-
-
-    team_name = ""
-    for char in team:
-        if char == 0:
-            break
-        if char < 402:
-            team_name += romdata["charmap_text"][char]
-        else:
-            team_name += "*"
-
-    return team_name
-
-
-def get_team_numbers(name: str) -> List[int]:
-    """Encode up-to-11-char team name into a list of ints using romdata"""
-
-    charmap = romdata["charmap_text"]
-
-    team_numbers = []
-    for char in name:
-        if char in charmap:
-            team_numbers.append(charmap.index(char))
-        else:
-            raise ValueError("Encoding team name {name} failed")
-
-    return team_numbers
-
-
 @dataclass
 class RevivalCode:
     timestamp: int
@@ -608,9 +572,6 @@ class RevivalCode:
         )
 
 
-Password = List[int]
-
-
 def rescue_password_from_text(text: str) -> Password:
     """Read a string of 60 uninterrupted characters and turn into symbol values"""
 
@@ -626,14 +587,41 @@ def rescue_password_from_text(text: str) -> Password:
     return numbers
 
 
-def get_revival_from_rescue(rescue: RescueCode) -> List[str]:
-    """Given a (valid) rescue code, generate a revival code."""
+def code_to_symbols(info: Union[RescueCode, RevivalCode]) -> List[str]:
+    """Given a code, generate the symbols (1h Pe etc.) that comprise the code in-game."""
 
-    revival = RevivalCode.from_rescue_code(rescue)
-    return revival.to_symbols()
+    writer = BitstreamWriter()
+    writer.write(info.timestamp, 32)
+    writer.write(info.type, 1)
+    writer.write(info.unk1, 1)
+    for x in range(12):
+        if x < len(info.team_name):
+            writer.write(info.team_name[x], 9)
+        else:
+            writer.write(0, 9)
+    if isinstance(info, RescueCode):
+        writer.write(info.dungeon, 7)
+        writer.write(info.floor, 7)
+        writer.write(info.pokemon, 11)
+        writer.write(info.gender, 2)
+        writer.write(info.reward, 2)
+        writer.write(info.unk2, 1)
+    else:
+        writer.write(info.revive, 30)
+
+    code = writer.finish()
+    code = [checksum(code)] + code
+
+    code = apply_crypto(code, encrypt=True)
+    code = apply_bitpack(code, 8, 6)
+    code = apply_shuffle(code, reverse=True)
+
+    symbols = [get_symbol_from_index(i) for i in code]
+    return symbols
 
 
 if __name__ == "__main__":
+    # i don't think this will ever work because of the open_url call at the top but whatever
     ex = "Pf8sPs4fPhXe3f7h1h2h5s8w3h9s3fXh4wMw4s6w8w9w6e2f8h9f1h2s1w8h"
     password = rescue_password_from_text(ex)
     rescue = RescueCode.from_password(password)
