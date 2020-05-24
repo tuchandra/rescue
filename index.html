@@ -59,7 +59,7 @@
           <button class="symbol symbol-fire" type="button" onclick="addToPassword(this)">X</button>
         </div>
         <div class="py-1 px-4">
-          <button class="symbol symbol-heart" type="button">1</button>
+          <button class="symbol symbol-heart" type="button" onclick="addToPassword(this)">1</button>
           <button class="symbol symbol-heart" type="button" onclick="addToPassword(this)">2</button>
           <button class="symbol symbol-heart" type="button" onclick="addToPassword(this)">3</button>
           <button class="symbol symbol-heart" type="button" onclick="addToPassword(this)">4</button>
@@ -166,6 +166,8 @@
       </div>
 
       <div class="text-xl pb-4 hidden" id="password-too-short">The password is too short!</div>
+      <div class="text-xl pb-4 hidden" id="password-invalid">The password didn't work! Check each symbol and try again.
+      </div>
 
       <button class="py-2 px-4 mb-4 rounded-full text-2xl text-gray-800 bg-blue-300"
         onclick="submitPassword()">Submit!</button>

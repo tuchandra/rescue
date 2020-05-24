@@ -1,5 +1,3 @@
-// import * as python from "./python.js";
-
 var rescuePasswordInput;
 var revivalPasswordOutput;
 
@@ -16,24 +14,48 @@ async function pyImportRescues() {
   );
   pyodide.runPython(rescues);
   pyodide.runPython(`
-    code = RescueCode('Pf8sPs4fPhXe3f7h1h2h5s8w3h9s3fXh4wMw4s6w8w9w6e2f8h9f1h2s1w8h')
-    print(code)
+    code = rescue_password_from_text('Pf8sPs4fPhXe3f7h1h2h5s8w3h9s3fXh4wMw4s6w8w9w6e2f8h9f1h2s1w8h')
+    components = decode_rescue_password(code)
+    print(components.to_text())
   `);
+}
+
+function pyValidateRescuePassword(passwordSymbols) {
+  // Checks if an entered rescue password is valid
+  // passwordSymbols: array of 30 2-char symbols
+  // return: true or false
+
+  // This is necessary for Python to see the JS object
+  window.passwordSymbols = passwordSymbols;
+
+  let valid = pyodide.runPython(`
+    from js import passwordSymbols;
+
+    code = rescue_password_from_text("".join(passwordSymbols))
+    components = decode_rescue_password(code)
+    components.validate()
+  `)
+
+  console.log("Checking valid: ", valid);
+  return valid
 }
 
 function pyGenerateRevivalPassword(passwordSymbols) {
   // passwordSymbols: array of 30 2-char symbols
   // return: array of 30 2-char symbols
 
+  // This is necessary for Python to see the JS object
   window.passwordSymbols = passwordSymbols;
 
   revival = pyodide.runPython(`
-    # This is necessary for Python to see the JS object
     from js import passwordSymbols;
 
-    code = RescueCode("".join(passwordSymbols))
-    revival = code.decode()
-    revival
+    code = rescue_password_from_text("".join(passwordSymbols))
+    components = decode_rescue_password(code)
+    print(components.to_text())
+    print(components.validate())
+
+    get_revival_from_rescue(components)
   `);
 
   console.log(revival);
@@ -177,15 +199,22 @@ const submitPassword = function () {
     return;
   }
 
-  // Send password to Python
+  // Check if valid
   let text = symbolsToText(passwordSymbols);
-  try {
-    var revivalPassword = pyGenerateRevivalPassword(text);
-    console.log("revivalPassword: ", revivalPassword);
-  } catch {
-    // Password was invalid ... do something
-    console.log("password invalid ...");
+  if (pyValidateRescuePassword(text) === false) {
+    // Password is incomplete
+    invalidPasswordMessage = document.getElementById("password-invalid");
+    invalidPasswordMessage.classList.remove("hidden");
+
+    return;
   }
+
+  invalidPasswordMessage = document.getElementById("password-invalid");
+  invalidPasswordMessage.classList.add("hidden");
+
+  // If we reached this point, the password is valid - generate revival and call it a day
+  let revivalPassword = pyGenerateRevivalPassword(text);
+  console.log("revivalPassword: ", revivalPassword);
 
   // Put revival password in the space
   fillRevivalPassword(revivalPassword);
