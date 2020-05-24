@@ -18,7 +18,7 @@ async function pyImportRescues() {
     rescue = RescueCodeComponents.from_password(password)
     print(rescue.to_text())
     revival = RevivalCodeComponents.from_rescue_code(rescue)
-    print(revival, revival.to_symbols())
+    print(revival, code_to_symbols(revival))
   `);
 }
 
@@ -61,6 +61,30 @@ function pyGenerateRevivalPassword(passwordSymbols) {
 
   console.log(revival);
   return revival;
+}
+
+function pyGenerateRescuePassword(dungeon, floor, team) {
+  // Generate a rescue password given dungeon, floor, and team
+
+  window.dungeon = dungeon
+  window.floor = floor
+  window.team = team
+
+  let rescue = pyodide.runPython(`
+    from js import dungeon, floor, team
+
+    rescue = RescueCodeComponents.from_scratch(dungeon_name=dungeon, floor=floor, team_name=team)
+    print(rescue.to_text())
+
+    if not rescue.validate():
+      raise ValueError("rescue info invalid -- probably from floor being impossible")
+
+    symbols = code_to_symbols(rescue)
+    print("".join(symbols))
+    symbols
+  `)
+
+  return rescue;
 }
 
 const addToPassword = function (element) {
@@ -132,11 +156,11 @@ const textToSymbol = function (text) {
   return newElement;
 };
 
-const fillRevivalPassword = function (symbols) {
+const fillPassword = function (field, symbols) {
   // Fill the password output with a provided set of text symbols
 
   var i = 0;
-  for (group of revivalPasswordOutput.children) {
+  for (group of field.children) {
     for (space of group.children) {
       space.replaceWith(textToSymbol(symbols[i]));
       i++;
@@ -218,9 +242,86 @@ const submitPassword = function () {
   console.log("revivalPassword: ", revivalPassword);
 
   // Put revival password in the space
-  fillRevivalPassword(revivalPassword);
+  fillRevivalPassword(revivalPasswordOutput, revivalPassword);
 
   // Remove display:none
   document.getElementById("revival-password-text").classList.remove("hidden");
   revivalPasswordOutput.classList.remove("hidden");
 };
+
+const populateDungeons = function () {
+  // Populate the dungeons dropdown menu
+  // .
+}
+
+const submitRescueInfo = function () {
+  // Submit info to generate a rescue
+  document.getElementById("choose-a-floor").classList.add("hidden");
+  document.getElementById("floor-invalid").classList.add("hidden");
+
+  let dungeon = document.getElementById("rescue-dungeon").selectedOptions[0].value;
+  let floor = document.getElementById("rescue-floor").value;
+  let team = document.getElementById("rescue-team").value;
+
+  if (floor === "") {
+    document.getElementById("choose-a-floor").classList.remove("hidden");
+    return;
+  }
+
+  team = (team === "") ? "tusharc.dev" : team
+
+  // Get the rescue code, fill it in
+  let rescuePassword;
+  try {
+    rescuePassword = pyGenerateRescuePassword(dungeon, parseInt(floor), team);
+  } catch {
+    // The password was invalid, probably because of floor being out of range
+    document.getElementById("floor-invalid").classList.remove("hidden");
+    return;
+  }
+
+  let passwordField = document.getElementById("generated-password");
+  fillPassword(passwordField, rescuePassword);
+
+  passwordField.classList.remove("hidden");
+  document.getElementById("rescue-password-text").classList.remove("hidden");
+  return;
+}
+
+
+const getDummyPasswordSymbols = function () {
+  // Helper to just get some dummy symbols at any time
+
+  return [
+    "1F",
+    "2F",
+    "3F",
+    "4F",
+    "5F",
+    "1E",
+    "2E",
+    "3E",
+    "4E",
+    "5E",
+    "1S",
+    "2S",
+    "3S",
+    "4S",
+    "5S",
+    "1W",
+    "2W",
+    "3W",
+    "4W",
+    "5W",
+    "1H",
+    "2H",
+    "3H",
+    "4H",
+    "5H",
+    "PS",
+    "XH",
+    "XE",
+    "XW",
+    "XF",
+  ]
+}
