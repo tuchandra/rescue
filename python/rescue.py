@@ -19,11 +19,37 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 from pyodide import open_url
 
 # This is the equivalent of
-# with open("gamedata.json") as f: romdata = json.load(f)
+#  with open("gamedata.json") as f: romdata = json.load(f)
+# where we have to use open_url because we plan to run this in-browser.
 romdata = json.loads(open_url("python/gamedata.json").read())
 
+# These are maps from dungeon_name : index, pokemon_species : index, etc., where the
+# indexes are what get encoded into passwords
+valid_dungeons = {
+    info["name"]: index
+    for index, info in enumerate(romdata["dungeons"])
+    if info["valid"]
+}
+valid_pokemon = {
+    info["name"]: index
+    for index, info in enumerate(romdata["pokemon"])
+    if info["valid"]
+}
+valid_genders = {
+    info["name"]: index
+    for index, info in enumerate(romdata["genders"])
+    if info["valid"]
+}
+valid_rewards = {
+    info["name"]: index
+    for index, info in enumerate(romdata["rewards"])
+    if info["valid"]
+}
 
-def get_romdata_index(table, index):
+
+def get_romdata_entry(table: str, index: int):
+    """Get entry stored at an index within a particular (global) romdata table"""
+
     if index >= len(romdata[table]):
         if table == "dungeons":
             return {
@@ -236,7 +262,7 @@ def apply_shuffle(code: Password, reverse=False) -> Password:
         20, 11, 0, 1, 22, 24, 14, 8, 2, 15, 25, 10, 5, 18, 26,
         # fmt: on
     ]
-    newcode = [None] * len(shuffle)
+    newcode: List[int] = [-1] * len(shuffle)
     for i, x in enumerate(shuffle):
         if not reverse:
             newcode[i] = code[x]
@@ -333,8 +359,6 @@ class RescueCodeComponents:
     of the *original* (not decoded) password.
     """
 
-    checksum: int
-    calculated_checksum: int
     timestamp: int
     team_name: List[int]
     dungeon: int
@@ -342,10 +366,14 @@ class RescueCodeComponents:
     pokemon: int
     gender: int
     reward: int
-    revive: int
+
+    # these are all computed from the above or unnecessary
+    checksum: int = 0
+    calculated_checksum: int = 0
+    revive: int = 0
     unk1: int = 0
     unk2: int = 0
-    type: int = 0
+    type: int = 0  # this is always 0 for rescue codes
 
     @classmethod
     def from_password(cls, password: Password):
@@ -385,15 +413,45 @@ class RescueCodeComponents:
 
         return cls(**info)
 
+    @classmethod
+    def from_scratch(
+        cls,
+        dungeon_name: str,
+        floor: int,
+        team_name: str = "tusharc.dev",
+        pokemon: str = "Spheal",
+        gender: str = "Male",
+        reward: str = "Deluxe",
+    ):
+        """Generate rescue code from nothing"""
+
+        # Get indices of all the different pieces
+        info: Dict[str, Any] = {}
+
+        try:
+            info["dungeon"] = valid_dungeons[dungeon_name]
+            info["pokemon"] = valid_pokemon[pokemon]
+            info["gender"] = valid_genders[gender]
+            info["reward"] = valid_rewards[reward]
+        except KeyError:
+            print("One of dungeon, pokemon, gender, or reward was invalid")
+            raise
+
+        info["floor"] = floor
+        info["team_name"] = get_team_numbers(team_name)
+        info["timestamp"] = int(datetime.now().timestamp())
+
+        return cls(**info)
+
     def read_romdata(self, name: str, value: int) -> str:
         """Decode dungeon, pokemon, gender, or reward field using romdata"""
 
         romdata_entry = {
             # name: romdata entry
-            "dungeon": get_romdata_index("dungeons", value),
-            "pokemon": get_romdata_index("pokemon", value),
-            "gender": get_romdata_index("genders", value),
-            "reward": get_romdata_index("rewards", value),
+            "dungeon": get_romdata_entry("dungeons", value),
+            "pokemon": get_romdata_entry("pokemon", value),
+            "gender": get_romdata_entry("genders", value),
+            "reward": get_romdata_entry("rewards", value),
         }[name]
 
         decoded_value = romdata_entry["name"]
@@ -405,7 +463,7 @@ class RescueCodeComponents:
     def get_floor(self, floor: int) -> str:
         """Get floor text"""
 
-        dungeon_data = get_romdata_index("dungeons", self.dungeon)
+        dungeon_data = get_romdata_entry("dungeons", self.dungeon)
 
         if not dungeon_data["ascending"]:
             floor_text = f"B{floor}"
@@ -449,6 +507,43 @@ class RescueCodeComponents:
         # this line can cause an error if the code is *very* wrong, so compute the checksum
         # as a first pass for correctness
         return not "(!)" in self.to_text()
+
+
+def code_to_symbols(
+    info: Union[RescueCodeComponents, RevivalCodeComponents]
+) -> List[str]:
+    """
+    Given code info (e.g., dungeon, floor, etc.), generate a rescue or revival code.
+    """
+
+    writer = BitstreamWriter()
+    writer.write(info.timestamp, 32)
+    writer.write(info.type, 1)
+    writer.write(info.unk1, 1)
+    for x in range(12):
+        if x < len(info.team_name):
+            writer.write(info.team_name[x], 9)
+        else:
+            writer.write(0, 9)
+    if isinstance(info, RescueCodeComponents):
+        writer.write(info.dungeon, 7)
+        writer.write(info.floor, 7)
+        writer.write(info.pokemon, 11)
+        writer.write(info.gender, 2)
+        writer.write(info.reward, 2)
+        writer.write(info.unk2, 1)
+    else:
+        writer.write(info.revive, 30)
+
+    code = writer.finish()
+    code = [checksum(code)] + code
+
+    code = apply_crypto(code, encrypt=True)
+    code = apply_bitpack(code, 8, 6)
+    code = apply_shuffle(code, reverse=True)
+
+    symbols = [get_symbol_from_index(i) for i in code]
+    return symbols
 
 
 def get_team_name(team: List[int]) -> str:
@@ -510,48 +605,6 @@ class RevivalCodeComponents:
             revive=rescue.revive,
             unk1=unk1,
         )
-
-    def to_symbols(self) -> List[str]:
-        """Convert to list of password symbols, e.g., PH 1S etc."""
-
-        numbers = encode_info_as_code(self)
-        symbols = [get_symbol_from_index(i) for i in numbers]
-
-        return symbols
-
-
-def encode_info_as_code(info: Union[RescueCodeComponents, RevivalCodeComponents]):
-    """
-    Given code info (e.g., dungeon, floor, etc.), generate a rescue or revival code.
-    """
-
-    writer = BitstreamWriter()
-    writer.write(info.timestamp, 32)
-    writer.write(info.type, 1)
-    writer.write(info.unk1, 1)
-    for x in range(12):
-        if x < len(info.team_name):
-            writer.write(info.team_name[x], 9)
-        else:
-            writer.write(0, 9)
-    if info.type == 0:
-        writer.write(info.dungeon, 7)
-        writer.write(info.floor, 7)
-        writer.write(info.pokemon, 11)
-        writer.write(info.gender, 2)
-        writer.write(info.reward, 2)
-        writer.write(info.unk2, 1)
-    else:
-        writer.write(info.revive, 30)
-
-    code = writer.finish()
-    code = [checksum(code)] + code
-
-    code = apply_crypto(code, encrypt=True)
-    code = apply_bitpack(code, 8, 6)
-    code = apply_shuffle(code, reverse=True)
-
-    return code
 
 
 Password = List[int]
