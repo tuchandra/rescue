@@ -1,9 +1,7 @@
 var rescuePasswordInput;
-var revivalPasswordOutput;
 
 window.onload = function () {
   rescuePasswordInput = document.getElementById("password-input");
-  revivalPasswordOutput = document.getElementById("password-output");
   pyImportRescues();
 };
 
@@ -242,6 +240,7 @@ const submitPassword = function () {
   console.log("revivalPassword: ", revivalPassword);
 
   // Put revival password in the space
+  let revivalPasswordOutput = document.getElementById("password-output");
   fillRevivalPassword(revivalPasswordOutput, revivalPassword);
 
   // Remove display:none
