@@ -466,64 +466,19 @@ def get_team_name(team: List[int]) -> str:
     return team_name
 
 
-def get_info_text(info: Union[RescueCodeComponents, RevivalCodeComponents]):
-    info_text = ""
+def get_team_numbers(name: str) -> List[int]:
+    """Encode up-to-11-char team name into a list of ints using romdata"""
 
-    info_text += "Checksum: 0x%02X (calculated: 0x%02X)\n" % (
-        info.checksum,
-        info.calculated_checksum,
-    )
-    info_text += "Timestamp: %s\n" % datetime.utcfromtimestamp(info.timestamp)
-    info_text += "Revive: %s\n" % (info.type == 1)
-    info_text += "Unk1: 0x%X\n" % info.unk1
+    charmap = romdata["charmap_text"]
 
-    info_text += "Team Name: "
-    for char in info.team_name:
-        if char == 0:
-            break
-        if char < 402:
-            info_text += romdata["charmap_text"][char]
+    team_numbers = []
+    for char in name:
+        if char in charmap:
+            team_numbers.append(charmap.index(char))
         else:
-            info_text += "*"
-    info_text += "\n"
+            raise ValueError("Encoding team name {name} failed")
 
-    if info.type == 0:
-        dungeon = get_romdata_index("dungeons", info.dungeon)
-        info_text += "Dungeon (%d): %s" % (info.dungeon, dungeon["name"])
-        if not dungeon["valid"]:
-            info_text += " (!)"
-        info_text += "\n"
-
-        floor = "%dF" % info.floor
-        if not dungeon["ascending"]:
-            floor = "B" + floor
-        info_text += "Floor: %s" % floor
-        if info.floor == 0 or info.floor > dungeon["floors"]:
-            info_text += " (!)"
-        info_text += "\n"
-
-        pokemon = get_romdata_index("pokemon", info.pokemon)
-        info_text += "Pokemon (%d): %s" % (info.pokemon, pokemon["name"])
-        if not pokemon["valid"]:
-            info_text += " (!)"
-        info_text += "\n"
-
-        gender = get_romdata_index("genders", info.gender)
-        info_text += "Gender: %s" % gender["name"]
-        if not gender["valid"]:
-            info_text += " (!)"
-        info_text += "\n"
-
-        reward = get_romdata_index("rewards", info.reward)
-        info_text += "Reward: %s" % reward["name"]
-        if not reward["valid"]:
-            info_text += " (!)"
-        info_text += "\n"
-
-        info_text += "Unk2: 0x%X\n" % info.unk2
-
-    info_text += "Revive value: 0x%08X\n" % info.revive
-    return info_text
+    return team_numbers
 
 
 @dataclass
@@ -535,15 +490,23 @@ class RevivalCodeComponents:
     type: int = 1
 
     @classmethod
-    def from_rescue_code(cls, rescue: RescueCodeComponents):
+    def from_rescue_code(cls, rescue: RescueCodeComponents, team_name: str = None):
         """Create revival code from a rescue code"""
 
         timestamp = int(datetime.now().timestamp())
         unk1 = 1
 
+        # We need a list of ints to pass to the class, not a string; note that
+        # RescueCodeComponents already has the list of ints, but if a new name
+        # is passed, we have to convert it
+        if team_name is not None:
+            team_numbers = get_team_numbers(team_name)
+        else:
+            team_numbers = rescue.team_name
+
         return cls(
             timestamp=timestamp,
-            team_name=rescue.team_name,
+            team_name=team_numbers,
             revive=rescue.revive,
             unk1=unk1,
         )
