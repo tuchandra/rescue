@@ -1,8 +1,10 @@
 var rescuePasswordInput;
 
 window.onload = function () {
-  rescuePasswordInput = document.getElementById("password-input");
-  pyImportRescues();
+  languagePluginLoader.then(function () {
+    rescuePasswordInput = document.getElementById("password-input");
+    pyImportRescues();
+  });
 };
 
 async function pyImportRescues() {
